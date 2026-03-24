@@ -1,0 +1,14 @@
+session_name: eagle-platform
+start_directory: "~/Developer/Work/eagle-platform"
+
+windows:
+  - window_name: dev
+    layout: main-horizontal
+    options:
+      main-pane-height: 60  
+    panes:
+      - shell_command: nvim .
+        focus: true               # The cursor will now land here!
+      - shell_command: lazygit
+      - shell_command: ""         # Empty bottom middle
+      - shell_command: ""         # Empty bottom right
