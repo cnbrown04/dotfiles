@@ -10,5 +10,5 @@ windows:
       - shell_command: nvim .
         focus: true               # The cursor will now land here!
       - shell_command: lazygit
-      - shell_command: ""         # Empty bottom middle
-      - shell_command: ""         # Empty bottom right
+      - shell_command: "cd apps/eagle-service && bun run dev"         # Empty bottom middle
+      - shell_command: "cd apps/eagle-backend && go run ./cmd/"         # Empty bottom right
