@@ -3,12 +3,14 @@ start_directory: "~/Developer/Work/eagle-platform"
 
 windows:
   - window_name: dev
-    layout: main-horizontal
-    options:
-      main-pane-height: 60  
+    layout: 38a4,319x80,0,0[319x59,0,0{240x59,0,0,1,78x59,241,0,5},319x20,0,60{106x20,0,60,2,106x20,107,60,3,105x20,214,60,4}]
     panes:
-      - shell_command: nvim .
-        focus: true               # The cursor will now land here!
-      - shell_command: lazygit
-      - shell_command: "cd apps/eagle-service && bun run dev"         # Empty bottom middle
-      - shell_command: "cd apps/eagle-backend && go run ./cmd/"         # Empty bottom right
+      # --- TOP ROW ---
+      - shell_command: nvim .        # Large top-left
+        focus: true
+      - shell_command: agent       # Narrow top-right
+
+      # --- BOTTOM ROW ---
+      - shell_command: lazygit                                      # Bottom-left
+      - shell_command: "cd apps/eagle-service && bun run dev"       # Bottom-middle
+      - shell_command: "cd apps/eagle-backend && go run ./cmd/"     # Bottom-right
