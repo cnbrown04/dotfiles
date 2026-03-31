@@ -15,3 +15,6 @@ vim.opt.wrap = false
 vim.opt.incsearch = true -- incremental search
  
 vim.opt.termguicolors = true
+
+-- Hide end-of-buffer "~" lines (especially noticeable in sidebars like Neo-tree).
+vim.opt.fillchars:append({ eob = " " })
