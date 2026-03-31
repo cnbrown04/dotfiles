@@ -1,0 +1,31 @@
+theme = Ayu Mirage
+background-opacity = 0.88
+background-blur-radius = 25
+
+font-family = JetBrainsMonoNL Nerd Font
+font-feature = -liga,-calt,-dlig
+cursor-style = block
+cursor-style-blink = false
+cursor-color = cell-foreground
+cursor-text = cell-background
+unfocused-split-opacity = 0.55
+split-divider-color = #524f67
+
+macos-titlebar-style = hidden
+macos-option-as-alt = true
+mouse-hide-while-typing = true
+
+confirm-close-surface = false
+window-decoration = auto
+window-padding-x = 10
+window-padding-y = 10
+window-padding-balance = true
+
+auto-update = check
+auto-update-channel = stable
+
+# extras
+shell-integration-features = no-cursor
+copy-on-select = clipboard
+# cmd or alt c copy (not vim yank)
+
