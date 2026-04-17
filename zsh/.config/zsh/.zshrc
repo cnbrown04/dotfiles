@@ -119,3 +119,6 @@ export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 export COLORTERM=truecolor
 
+
+# opencode
+export PATH=/Users/caleb/.opencode/bin:$PATH
