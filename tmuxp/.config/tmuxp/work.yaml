@@ -3,7 +3,7 @@ start_directory: "~/Developer/Work/eagle-platform"
 
 windows:
   - window_name: dev
-    layout: 38a4,319x80,0,0[319x59,0,0{240x59,0,0,1,78x59,241,0,5},319x20,0,60{106x20,0,60,2,106x20,107,60,3,105x20,214,60,4}]
+    layout: d301,317x81,0,0[317x61,0,0{244x61,0,0,92,72x61,245,0,96},317x19,0,62{158x19,0,62,93,158x19,159,62,94}]
     panes:
       # --- TOP ROW ---
       - shell_command: nvim .        # Large top-left
@@ -11,6 +11,5 @@ windows:
       - shell_command: agent       # Narrow top-right
 
       # --- BOTTOM ROW ---
-      - shell_command: lazygit                                      # Bottom-left
-      - shell_command: "cd apps/eagle-service && bun run dev"       # Bottom-middle
-      - shell_command: "cd apps/eagle-backend && go run ./cmd/"     # Bottom-right
+      - shell_command: "zsh -lc 'bunx concurrently -c \"cyan,magenta,yellow\" -n \"eagle,core,caddy\" \"cd apps/eagle-service && bun run dev\" \"cd apps/core-service && bun run dev --port 3002\" \"caddy run --config ./Caddyfile.local\"'"  # Bottom-left
+      - shell_command: "zsh -lc 'cd apps/eagle-backend && go run ./cmd/'"       # Bottom-right
