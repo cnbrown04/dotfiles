@@ -29,6 +29,9 @@ Bootstrap installs [Homebrew](https://brew.sh) on macOS and Linux, then uses it 
 
 ## Install script
 
+<details>
+<summary>What <code>bootstrap</code> installs</summary>
+
 Run:
 
 ```bash
@@ -36,9 +39,6 @@ Run:
 ```
 
 to bootstrap your system.
-
-<details>
-<summary>What <code>bootstrap</code> installs</summary>
 
 - **Homebrew** (macOS + Linux) — git, zsh, tmux, neovim, starship, lazygit, gh, lua-language-server, rust-analyzer, node, curl
 - **Ghostty + JetBrainsMono Nerd Font** — Homebrew cask on macOS; brew or distro fallback on Linux
