@@ -46,8 +46,8 @@ Bootstrap installs [Homebrew](https://brew.sh) on macOS and Linux, then uses it 
 **Post-install setup:**
 
 - `/etc/zshenv` — ZDOTDIR, XDG paths, git config location
-- zap — zsh plugin manager
-- TPM — tmux plugin manager
+- [zap](https://github.com/zap-zsh/zap) — zsh plugin manager
+- [TPM](https://github.com/tmux-plugins/tpm) — tmux plugin manager
 - Neovim plugins — `vim.pack.sync()`
 - Ghostty platform config symlink
 - Claude Code settings symlink → `~/.claude/settings.local.json`
@@ -58,36 +58,33 @@ After bootstrap, log in to services manually: `gh auth login`, Cursor CLI login,
 
 ### zsh (via [zap](https://github.com/zap-zsh/zap))
 
-- zsh-users/zsh-autosuggestions
-- zap-zsh/supercharge
-- zsh-users/zsh-syntax-highlighting
+- [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) — fish-style command suggestions as you type
+- [supercharge](https://github.com/zap-zsh/supercharge) — speeds up zsh startup and defers compinit for zap
+- [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) — colors valid/invalid commands while typing
 
 ### tmux (via [TPM](https://github.com/tmux-plugins/tpm))
 
-- tmux-plugins/tpm only (no extra plugins configured)
+- [tpm](https://github.com/tmux-plugins/tpm) — plugin manager only; no extra tmux plugins configured
 
 ### neovim (via built-in `vim.pack`)
 
-- hardtime.nvim
-- barbecue.nvim, nvim-navic
-- noice.nvim, nvim-notify
-- hover.nvim
-- owl-themes.nvim
-- fff.nvim
-- neo-tree.nvim, plenary.nvim, nui.nvim, nvim-web-devicons
+- [hardtime.nvim](https://github.com/m4xshen/hardtime.nvim) — nudges you away from repetitive keys and bad habits
+- [barbecue.nvim](https://github.com/utilyre/barbecue.nvim) — winbar breadcrumbs showing file path and symbols
+- [nvim-navic](https://github.com/SmiteshP/nvim-navic) — LSP symbol trail used by barbecue
+- [noice.nvim](https://github.com/folke/noice.nvim) — nicer cmdline, messages, and popup menu UI
+- [nvim-notify](https://github.com/rcarriga/nvim-notify) — toast-style notifications (used by noice)
+- [hover.nvim](https://github.com/lewis6991/hover.nvim) — unified hover docs for LSP, marks, and more
+- [owl-themes.nvim](https://github.com/cnbrown04/owl-themes.nvim) — Light Owl / Night Owl colorscheme
+- [fff.nvim](https://github.com/dmtrKovalenko/fff.nvim) — fast fuzzy file finder
+- [neo-tree.nvim](https://github.com/nvim-neo-tree/neo-tree.nvim) — sidebar file tree
+- [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) — Lua stdlib helpers (neo-tree dependency)
+- [nui.nvim](https://github.com/MunifTanjim/nui.nvim) — UI components (neo-tree dependency)
+- [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons) — filetype icons
 
-**LSP servers** (configured in `nvim/lsp/`): lua_ls, rust_analyzer, ts_ls, pyright, html, cssls
+**LSP servers** (configured in `nvim/lsp/`):
 
-## Not tracked
-
-- zsh history, compdump, sessions
-- tmux plugin clones
-- cursor chat history, statsig cache, and auth/session fields (login repopulates those)
-- gh auth tokens (`gh/hosts.yml`)
-- raycast installed extensions
-- ghostty `macos.conf` / `linux.conf` symlinks (created by bootstrap)
-
-## Notes
-
-- Git signing uses 1Password SSH on macOS — adjust `git/config` on other machines if needed.
-- `chsh -s $(brew --prefix)/bin/zsh` to make Homebrew zsh your login shell.
+- [lua-language-server](https://github.com/LuaLS/lua-language-server) — Lua
+- [rust-analyzer](https://github.com/rust-lang/rust-analyzer) — Rust
+- [typescript-language-server](https://github.com/typescript-language-server/typescript-language-server) — TypeScript/JavaScript
+- [pyright](https://github.com/microsoft/pyright) — Python
+- [vscode-langservers-extracted](https://github.com/hrsh7th/vscode-langservers-extracted) — HTML and CSS
