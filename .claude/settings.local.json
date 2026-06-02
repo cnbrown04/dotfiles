@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(nvim *)",
+      "Read(//private/tmp/**)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(gh api *)"
+    ]
+  }
+}

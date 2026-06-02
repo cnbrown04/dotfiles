@@ -31,104 +31,94 @@ brew_shellenv() {
     eval "$(/opt/homebrew/bin/brew shellenv)"
   elif [[ -x /usr/local/bin/brew ]]; then
     eval "$(/usr/local/bin/brew shellenv)"
+  elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  elif [[ -x "${HOME}/.linuxbrew/bin/brew" ]]; then
+    # shellcheck source=/dev/null
+    eval "$("${HOME}/.linuxbrew/bin/brew" shellenv)"
   elif have brew; then
     eval "$(brew shellenv)"
   fi
 }
 
 ensure_homebrew() {
+  brew_shellenv
   have brew && return 0
+
   log "installing Homebrew"
   NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   brew_shellenv
   have brew || die "Homebrew install finished but brew is not on PATH"
 }
 
-install_packages() {
-  log "installing packages ($PLATFORM${DISTRO:+ / $DISTRO})"
+install_brew_packages() {
+  log "installing packages via Homebrew"
+  ensure_homebrew
+  brew update
+  brew install \
+    git zsh tmux neovim starship lazygit gh \
+    lua-language-server rust-analyzer node curl
+}
 
-  case "$PLATFORM" in
-    macos)
-      ensure_homebrew
-      brew update
-      brew install git zsh tmux neovim starship lazygit gh \
-        lua-language-server rust-analyzer node
+install_ghostty() {
+  if have ghostty; then
+    log "ghostty already installed"
+    return 0
+  fi
+
+  log "installing ghostty"
+  ensure_homebrew
+
+  if [[ "$PLATFORM" == macos ]]; then
+    brew install --cask ghostty
+    return 0
+  fi
+
+  if brew install ghostty 2>/dev/null; then
+    return 0
+  fi
+
+  case "$DISTRO" in
+    ubuntu|debian|pop|linuxmint)
+      if sudo apt-get update && sudo apt-get install -y ghostty 2>/dev/null; then
+        return 0
+      fi
+      log "ghostty not in apt; installing via snap"
+      sudo snap install ghostty --classic
       ;;
-    linux)
-      case "$DISTRO" in
-        ubuntu|debian|pop|linuxmint)
-          sudo apt-get update
-          sudo apt-get install -y \
-            git zsh tmux neovim curl ca-certificates \
-            lua-language-server nodejs npm
-          if ! have gh; then
-            log "installing GitHub CLI (apt repo)"
-            sudo mkdir -p -m 755 /etc/apt/keyrings
-            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
-              | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null
-            sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
-            echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
-              | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
-            sudo apt-get update
-            sudo apt-get install -y gh
-          fi
-          if ! have lazygit; then
-            sudo apt-get install -y lazygit 2>/dev/null || install_lazygit_release
-          fi
-          if ! have starship; then
-            install_starship_release
-          fi
-          if ! have rust-analyzer; then
-            if have rustup; then
-              rustup component add rust-analyzer
-            else
-              warn "rust-analyzer not installed; install rustup for Rust LSP support"
-            fi
-          fi
-          ;;
-        fedora|rhel|centos)
-          sudo dnf install -y \
-            git zsh tmux neovim curl \
-            lua-language-server nodejs npm \
-            gh lazygit starship rust-analyzer
-          ;;
-        arch|manjaro)
-          sudo pacman -Sy --needed --noconfirm \
-            git zsh tmux neovim curl \
-            lua-language-server nodejs npm \
-            github-cli lazygit starship rust-analyzer
-          ;;
-        *)
-          die "unsupported Linux distro: ${DISTRO:-unknown}"
-          ;;
-      esac
+    fedora|rhel|centos)
+      sudo dnf install -y ghostty
+      ;;
+    arch|manjaro)
+      sudo pacman -S --needed --noconfirm ghostty
+      ;;
+    *)
+      warn "ghostty not available via brew or ${DISTRO}; see https://ghostty.org/download"
       ;;
   esac
 }
 
-install_starship_release() {
-  log "installing starship (upstream installer)"
-  curl -fsSL https://starship.rs/install.sh | sh -s -- -y
-}
+install_ghostty_font() {
+  log "installing JetBrainsMono Nerd Font"
+  ensure_homebrew
 
-install_lazygit_release() {
-  log "installing lazygit (GitHub release)"
-  local os_label arch asset url
-  case "$(uname -s)" in
-    Darwin) os_label=Darwin ;;
-    Linux) os_label=Linux ;;
-    *) die "unsupported OS for lazygit install: $(uname -s)" ;;
+  if [[ "$PLATFORM" == macos ]]; then
+    brew install --cask font-jetbrains-mono-nerd-font
+    return 0
+  fi
+
+  if brew install font-jetbrains-mono-nerd-font 2>/dev/null; then
+    return 0
+  fi
+
+  case "$DISTRO" in
+    arch|manjaro)
+      sudo pacman -S --needed --noconfirm ttf-jetbrains-mono-nerd
+      ;;
+    *)
+      warn "install JetBrainsMono Nerd Font manually if ghostty falls back to a default font"
+      ;;
   esac
-  case "$(uname -m)" in
-    x86_64|amd64) arch=x86_64 ;;
-    arm64|aarch64) arch=arm64 ;;
-    *) die "unsupported architecture for lazygit: $(uname -m)" ;;
-  esac
-  asset="lazygit_${os_label}_${arch}.tar.gz"
-  url="https://github.com/jesseduffield/lazygit/releases/latest/download/${asset}"
-  mkdir -p "$BIN"
-  curl -fsSL "$url" | tar -xz -C "$BIN" lazygit
-  export PATH="$BIN:$PATH"
 }
 
 install_npm_lsps() {
@@ -139,65 +129,6 @@ install_npm_lsps() {
   log "installing npm language servers"
   npm install -g pyright typescript typescript-language-server \
     vscode-langservers-extracted
-}
-
-install_ghostty() {
-  if have ghostty; then
-    log "ghostty already installed"
-    return 0
-  fi
-
-  log "installing ghostty"
-  case "$PLATFORM" in
-    macos)
-      ensure_homebrew
-      brew install --cask ghostty
-      ;;
-    linux)
-      case "$DISTRO" in
-        ubuntu|debian|pop|linuxmint)
-          if ! sudo apt-get install -y ghostty 2>/dev/null; then
-            log "ghostty not in apt; installing via snap"
-            sudo snap install ghostty --classic
-          fi
-          ;;
-        fedora|rhel|centos)
-          sudo dnf install -y ghostty
-          ;;
-        arch|manjaro)
-          sudo pacman -S --needed --noconfirm ghostty
-          ;;
-        *)
-          warn "ghostty not packaged for ${DISTRO}; see https://ghostty.org/download"
-          return 0
-          ;;
-      esac
-      ;;
-  esac
-}
-
-install_ghostty_font() {
-  log "installing JetBrainsMono Nerd Font"
-  case "$PLATFORM" in
-    macos)
-      ensure_homebrew
-      brew install --cask font-jetbrains-mono-nerd-font
-      ;;
-    linux)
-      case "$DISTRO" in
-        arch|manjaro)
-          sudo pacman -S --needed --noconfirm ttf-jetbrains-mono-nerd
-          ;;
-        fedora|rhel|centos)
-          sudo dnf install -y jetbrains-mono-fonts-all-static-no-windows
-          warn "install a Nerd Font variant if JetBrainsMono Nerd Font Mono is missing"
-          ;;
-        ubuntu|debian|pop|linuxmint)
-          warn "install JetBrainsMono Nerd Font manually on ${DISTRO}"
-          ;;
-      esac
-      ;;
-  esac
 }
 
 setup_ghostty_platform() {
@@ -232,6 +163,19 @@ export GIT_CONFIG_GLOBAL=$HOME/.config/git/config
 EOF
 }
 
+setup_claude() {
+  local src="${CONFIG}/.claude/settings.local.json"
+  local dest="${HOME}/.claude/settings.local.json"
+
+  if [[ ! -f "$src" ]]; then
+    return 0
+  fi
+
+  log "linking Claude Code settings"
+  mkdir -p "${HOME}/.claude"
+  ln -sf "$src" "$dest"
+}
+
 install_zap() {
   if [[ -f "${DATA}/zap/zap.zsh" ]]; then
     log "zap already installed"
@@ -263,17 +207,27 @@ sync_nvim_plugins() {
   nvim --headless "+lua vim.cmd('packadd vim.pack'); vim.pack.sync()" +qa
 }
 
+suggest_default_shell() {
+  local zsh_path
+  zsh_path="$(brew --prefix 2>/dev/null)/bin/zsh"
+  if [[ -x "$zsh_path" ]] && [[ "${SHELL:-}" != "$zsh_path" ]]; then
+    warn "default shell is not Homebrew zsh; run: chsh -s $zsh_path"
+  fi
+}
+
 main() {
   detect_platform
-  install_packages
+  install_brew_packages
   install_npm_lsps
   install_ghostty
   install_ghostty_font
   setup_ghostty_platform
   setup_zshenv
+  setup_claude
   install_zap
   install_tpm
   sync_nvim_plugins
+  suggest_default_shell
   log "done — open a new login shell (or run: exec zsh -l)"
 }
 
