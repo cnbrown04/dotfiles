@@ -11,4 +11,6 @@ cursor-style-blink = true
 window-padding-x = 8
 window-padding-y = 4
 title = "~"
-macos-titlebar-proxy-icon = hidden
+
+config-file = ?macos.conf
+config-file = ?linux.conf

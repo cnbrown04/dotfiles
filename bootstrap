@@ -141,6 +141,83 @@ install_npm_lsps() {
     vscode-langservers-extracted
 }
 
+install_ghostty() {
+  if have ghostty; then
+    log "ghostty already installed"
+    return 0
+  fi
+
+  log "installing ghostty"
+  case "$PLATFORM" in
+    macos)
+      ensure_homebrew
+      brew install --cask ghostty
+      ;;
+    linux)
+      case "$DISTRO" in
+        ubuntu|debian|pop|linuxmint)
+          if ! sudo apt-get install -y ghostty 2>/dev/null; then
+            log "ghostty not in apt; installing via snap"
+            sudo snap install ghostty --classic
+          fi
+          ;;
+        fedora|rhel|centos)
+          sudo dnf install -y ghostty
+          ;;
+        arch|manjaro)
+          sudo pacman -S --needed --noconfirm ghostty
+          ;;
+        *)
+          warn "ghostty not packaged for ${DISTRO}; see https://ghostty.org/download"
+          return 0
+          ;;
+      esac
+      ;;
+  esac
+}
+
+install_ghostty_font() {
+  log "installing JetBrainsMono Nerd Font"
+  case "$PLATFORM" in
+    macos)
+      ensure_homebrew
+      brew install --cask font-jetbrains-mono-nerd-font
+      ;;
+    linux)
+      case "$DISTRO" in
+        arch|manjaro)
+          sudo pacman -S --needed --noconfirm ttf-jetbrains-mono-nerd
+          ;;
+        fedora|rhel|centos)
+          sudo dnf install -y jetbrains-mono-fonts-all-static-no-windows
+          warn "install a Nerd Font variant if JetBrainsMono Nerd Font Mono is missing"
+          ;;
+        ubuntu|debian|pop|linuxmint)
+          warn "install JetBrainsMono Nerd Font manually on ${DISTRO}"
+          ;;
+      esac
+      ;;
+  esac
+}
+
+setup_ghostty_platform() {
+  local dir="${CONFIG}/ghostty"
+  local link="${dir}/${PLATFORM}.conf"
+  local target="platform/${PLATFORM}.conf"
+
+  if [[ ! -f "${dir}/${target}" ]]; then
+    warn "no ghostty platform config for ${PLATFORM}"
+    return 0
+  fi
+
+  log "linking ghostty ${PLATFORM} config"
+  ln -sf "$target" "$link"
+  case "$PLATFORM" in
+    macos) rm -f "${dir}/linux.conf" ;;
+    linux) rm -f "${dir}/macos.conf" ;;
+  esac
+}
+
 setup_zshenv() {
   if [[ -f /etc/zshenv ]] && grep -q 'ZDOTDIR=\$HOME/.config/zsh' /etc/zshenv; then
     log "/etc/zshenv already configured"
@@ -190,6 +267,9 @@ main() {
   detect_platform
   install_packages
   install_npm_lsps
+  install_ghostty
+  install_ghostty_font
+  setup_ghostty_platform
   setup_zshenv
   install_zap
   install_tpm

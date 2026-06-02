@@ -6,17 +6,20 @@ zsh/.zsh_sessions/
 # tmux plugins (installed by bootstrap)
 tmux/.tmux/plugins/
 
-# cursor / claude caches
-cursor/statsig-cache.json
-cursor/chats/
+# cursor (not managed in dotfiles)
+cursor/
+
+# claude local overrides
 .claude/
 nvim/.claude/
 
 # gh auth state (tokens live in keychain; hosts.yml is machine-local)
 gh/hosts.yml
 
-# raycast installed extensions
-raycast/extensions/
+# raycast (not managed in dotfiles)
+raycast/
 
-# macOS
-.DS_Store
+# ghostty platform symlinks (created by bootstrap)
+ghostty/macos.conf
+ghostty/linux.conf
+
