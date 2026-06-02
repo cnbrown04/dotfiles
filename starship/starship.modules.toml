@@ -1,0 +1,307 @@
+[deno]
+format = " via [∫ $version](green bold)"
+version_format = "${raw}"
+
+symbol = " "
+
+[lua]
+format = " via [${symbol}${version}]($style)"
+version_format = "${raw}"
+style = "bold bright-yellow"
+
+symbol = " "
+
+[nodejs]
+format = " via [◫ ($version)](bold bright-green)"
+version_format = "${raw}"
+detect_files = ["package-lock.json", "yarn.lock"]
+detect_folders = ["node_modules"]
+detect_extensions = []
+
+symbol = " "
+
+[bun]
+format = " via [◫ ($version)](bold bright-green)"
+version_format = "${raw}"
+
+symbol = " "
+
+[python]
+format = " via [${symbol}${version}]($style)"
+version_format = "${raw}"
+style = "bold bright-yellow"
+
+symbol = " "
+
+[ruby]
+format = " via [${symbol}${version}]($style)"
+version_format = "${raw}"
+style = "bold red"
+
+symbol = " "
+
+[rust]
+format = " via [$symbol$version]($style)"
+version_format = "${raw}"
+style = "bold red"
+
+symbol = "󱘗 "
+
+[package]
+format = " [pkg](italic dimmed) [$symbol$version]($style)"
+version_format = "${raw}"
+style = "dimmed yellow italic bold"
+
+symbol = "󰏗 "
+
+[swift]
+format = " via [${symbol}${version}]($style)"
+style = "bold bright-red"
+version_format = "${raw}"
+
+symbol = " "
+
+[aws]
+disabled = true
+format = " via [$symbol $profile $region]($style)"
+style = "bold blue"
+
+symbol = " "
+
+[buf]
+format = " via [$symbol $version $buf_version]($style)"
+
+symbol = " "
+
+[c]
+format = " [$symbol($version(-$name))]($style)"
+
+symbol = " "
+
+[cpp]
+format = " [$symbol($version(-$name))]($style)"
+
+symbol = " "
+
+[conda]
+format = " conda [$symbol$environment]($style)"
+
+symbol = " "
+
+[pixi]
+format = " pixi [$symbol$version ($environment )]($style)"
+
+symbol = "󰏗 "
+
+[dart]
+format = " dart [$symbol($version )]($style)"
+
+symbol = " "
+
+[docker_context]
+format = " docker [$symbol$context]($style)"
+
+symbol = " "
+
+[elixir]
+format = " exs [$symbol $version OTP $otp_version ]($style)"
+
+symbol = " "
+
+[elm]
+format = " elm [$symbol($version )]($style)"
+
+symbol = " "
+
+[golang]
+format = " go [$symbol($version )]($style)"
+
+symbol = " "
+
+[haskell]
+format = " hs [$symbol($version )]($style)"
+
+symbol = " "
+
+[java]
+format = " java [${symbol}(${version} )]($style)"
+
+symbol = " "
+
+[julia]
+format = " jl [$symbol($version )]($style)"
+
+symbol = " "
+
+[memory_usage]
+format = " mem [${ram}( ${swap})]($style)"
+
+symbol = "󰍛 "
+
+[nim]
+format = " nim [$symbol($version )]($style)"
+
+symbol = " "
+
+[nix_shell]
+style = 'bold italic dimmed blue'
+format = '[$symbol nix⎪$state⎪]($style) [$name](italic dimmed white)'
+impure_msg = '[⌽](bold dimmed red)'
+pure_msg = '[⌾](bold dimmed green)'
+unknown_msg = '[◌](bold dimmed yellow)'
+
+symbol = " "
+
+[spack]
+format = " spack [$symbol$environment]($style)"
+symbol = " "
+
+[azure]
+symbol = " "
+
+[cmake]
+symbol = " "
+
+[cobol]
+symbol = " "
+
+[container]
+symbol = " "
+
+[crystal]
+symbol = " "
+
+[direnv]
+symbol = " "
+
+[dotnet]
+symbol = " "
+
+[erlang]
+symbol = " "
+
+[fennel]
+symbol = " "
+
+[fortran]
+symbol = " "
+
+[fossil_branch]
+symbol = " "
+
+[gcloud]
+symbol = "󱇶 "
+
+[gleam]
+symbol = " "
+
+[git_commit]
+
+[gradle]
+symbol = " "
+
+[guix_shell]
+symbol = " "
+
+[haxe]
+symbol = " "
+
+[helm]
+symbol = " "
+
+[hg_branch]
+symbol = " "
+
+[hostname]
+
+[kotlin]
+symbol = " "
+
+[kubernetes]
+symbol = "󱃾 "
+
+[maven]
+symbol = " "
+
+[meson]
+symbol = "󰔷 "
+
+[mojo]
+symbol = "󰈸 "
+
+[nats]
+symbol = " "
+
+[netns]
+symbol = "󰛳 "
+
+[ocaml]
+symbol = " "
+
+[odin]
+symbol = "󰟢 "
+
+[opa]
+symbol = " "
+
+[openstack]
+symbol = " "
+
+[os.symbols]
+
+[perl]
+symbol = " "
+
+[php]
+symbol = " "
+
+[pijul_channel]
+symbol = " "
+
+[pulumi]
+symbol = " "
+
+[purescript]
+symbol = " "
+
+[raku]
+symbol = "󱖊 "
+
+[red]
+symbol = "󱍼 "
+
+[rlang]
+symbol = "󰟔 "
+
+[scala]
+symbol = " "
+
+[shlvl]
+symbol = "󰹍 "
+
+[singularity]
+symbol = " "
+
+[solidity]
+symbol = " "
+
+[status]
+symbol = " "
+
+[terraform]
+symbol = " "
+
+[vlang]
+symbol = " "
+
+[typst]
+symbol = " "
+
+[vagrant]
+symbol = " "
+
+[xmake]
+symbol = " "
+
+[zig]
+symbol = " "

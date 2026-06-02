@@ -1,0 +1,53 @@
+{
+  "plugins": {
+    "barbecue.nvim": {
+      "rev": "3e31404f0b93a2c30d151abf0648650ac811c664",
+      "src": "https://github.com/utilyre/barbecue.nvim"
+    },
+    "fff.nvim": {
+      "rev": "394a4dcb686430e790e94f276d9e80cc2bde77d1",
+      "src": "https://github.com/dmtrKovalenko/fff.nvim"
+    },
+    "hardtime.nvim": {
+      "rev": "b4e431934af1fe224a3a801f632c008278cb7628",
+      "src": "https://github.com/m4xshen/hardtime.nvim"
+    },
+    "hover.nvim": {
+      "rev": "e73c00da3a9c87a21d2a8ddf7ab4a39824bd5d56",
+      "src": "https://github.com/lewis6991/hover.nvim"
+    },
+    "neo-tree.nvim": {
+      "rev": "b83de592f2a8bdd749a00668a8253878cd801f15",
+      "src": "https://github.com/nvim-neo-tree/neo-tree.nvim",
+      "version": "3.0.0 - 4.0.0"
+    },
+    "noice.nvim": {
+      "rev": "7bfd942445fb63089b59f97ca487d605e715f155",
+      "src": "https://github.com/folke/noice.nvim"
+    },
+    "nui.nvim": {
+      "rev": "de740991c12411b663994b2860f1a4fd0937c130",
+      "src": "https://github.com/MunifTanjim/nui.nvim"
+    },
+    "nvim-navic": {
+      "rev": "f5eba192f39b453675d115351808bd51276d9de5",
+      "src": "https://github.com/SmiteshP/nvim-navic"
+    },
+    "nvim-notify": {
+      "rev": "8701bece920b38ea289b457f902e2ad184131a5d",
+      "src": "https://github.com/rcarriga/nvim-notify"
+    },
+    "nvim-web-devicons": {
+      "rev": "dfbfaa967a6f7ec50789bead7ef87e336c1fa63c",
+      "src": "https://github.com/nvim-tree/nvim-web-devicons"
+    },
+    "owl-themes.nvim": {
+      "rev": "93cfd67b326931b5dfd777531343f554d90e10d0",
+      "src": "https://github.com/cnbrown04/owl-themes.nvim"
+    },
+    "plenary.nvim": {
+      "rev": "74b06c6c75e4eeb3108ec01852001636d85a932b",
+      "src": "https://github.com/nvim-lua/plenary.nvim"
+    }
+  }
+}

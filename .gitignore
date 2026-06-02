@@ -1,0 +1,22 @@
+# zsh runtime
+zsh/.zsh_history
+zsh/.zcompdump*
+zsh/.zsh_sessions/
+
+# tmux plugins (installed by bootstrap)
+tmux/.tmux/plugins/
+
+# cursor / claude caches
+cursor/statsig-cache.json
+cursor/chats/
+.claude/
+nvim/.claude/
+
+# gh auth state (tokens live in keychain; hosts.yml is machine-local)
+gh/hosts.yml
+
+# raycast installed extensions
+raycast/extensions/
+
+# macOS
+.DS_Store

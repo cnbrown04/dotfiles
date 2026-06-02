@@ -1,0 +1,30 @@
+# Light Owl — terminal must be opaque (Ghostty background-opacity = 1)
+gui:
+  nerdFontsVersion: "3"
+  theme:
+    activeBorderColor:
+      - "#4876d6"
+      - bold
+    inactiveBorderColor:
+      - "#93A1A1"
+    searchingActiveBorderColor:
+      - "#4876d6"
+      - bold
+    optionsTextColor:
+      - "#4876d6"
+    selectedLineBgColor:
+      - "#d3e8f8"
+    inactiveViewSelectedLineBgColor:
+      - "#E0E0E0"
+    cherryPickedCommitFgColor:
+      - "#4876d6"
+    cherryPickedCommitBgColor:
+      - "#E0E7EA"
+    markedBaseCommitFgColor:
+      - "#4876d6"
+    markedBaseCommitBgColor:
+      - "#E0E0E0"
+    unstagedChangesColor:
+      - "#E64D49"
+    defaultFgColor:
+      - "#403f53"

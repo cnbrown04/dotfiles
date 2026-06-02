@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"
+
+link_home() {
+  local src="$CONFIG/home/$1"
+  local dest="$HOME/$1"
+  if [[ ! -f "$src" ]]; then
+    echo "missing $src" >&2
+    exit 1
+  fi
+  ln -sf "$src" "$dest"
+  echo "linked $dest -> $src"
+}
+
+echo "==> home symlinks"
+link_home .gitconfig
+link_home .zprofile
+
+echo "==> ZDOTDIR"
+if [[ ! -f /etc/zshenv ]] || ! grep -q 'ZDOTDIR=\$HOME/.config/zsh' /etc/zshenv 2>/dev/null; then
+  echo "Set ZDOTDIR in /etc/zshenv (requires sudo):"
+  echo '  echo "ZDOTDIR=\$HOME/.config/zsh" | sudo tee /etc/zshenv'
+fi
+
+echo "==> tmux plugin manager (TPM)"
+TPM="$CONFIG/tmux/.tmux/plugins/tpm"
+if [[ ! -d "$TPM" ]]; then
+  git clone https://github.com/tmux-plugins/tpm "$TPM"
+else
+  echo "TPM already installed at $TPM"
+fi
+
+echo "==> neovim plugins"
+if command -v nvim >/dev/null 2>&1; then
+  nvim --headless "+lua vim.cmd('packadd vim.pack'); vim.pack.sync()" +qa
+else
+  echo "nvim not found; skip plugin sync"
+fi
+
+echo "==> done"
