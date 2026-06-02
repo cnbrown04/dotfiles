@@ -29,6 +29,14 @@ Bootstrap installs [Homebrew](https://brew.sh) on macOS and Linux, then uses it 
 
 ## Install script
 
+Run:
+
+```bash
+~/.config/bootstrap
+```
+
+to bootstrap your system.
+
 <details>
 <summary>What <code>bootstrap</code> installs</summary>
 
