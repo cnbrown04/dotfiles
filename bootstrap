@@ -2,41 +2,199 @@
 set -euo pipefail
 
 CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"
+DATA="${XDG_DATA_HOME:-$HOME/.local/share}"
+BIN="${HOME}/.local/bin"
 
-link_home() {
-  local src="$CONFIG/home/$1"
-  local dest="$HOME/$1"
-  if [[ ! -f "$src" ]]; then
-    echo "missing $src" >&2
-    exit 1
+log() { printf '==> %s\n' "$*"; }
+warn() { printf 'warning: %s\n' "$*" >&2; }
+die() { printf 'error: %s\n' "$*" >&2; exit 1; }
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+detect_platform() {
+  case "$(uname -s)" in
+    Darwin) PLATFORM=macos ;;
+    Linux) PLATFORM=linux ;;
+    *) die "unsupported OS: $(uname -s)" ;;
+  esac
+
+  DISTRO=
+  if [[ "$PLATFORM" == linux && -f /etc/os-release ]]; then
+    # shellcheck source=/dev/null
+    . /etc/os-release
+    DISTRO="${ID:-unknown}"
   fi
-  ln -sf "$src" "$dest"
-  echo "linked $dest -> $src"
 }
 
-echo "==> home symlinks"
-link_home .gitconfig
-link_home .zprofile
+brew_shellenv() {
+  if [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [[ -x /usr/local/bin/brew ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  elif have brew; then
+    eval "$(brew shellenv)"
+  fi
+}
 
-echo "==> ZDOTDIR"
-if [[ ! -f /etc/zshenv ]] || ! grep -q 'ZDOTDIR=\$HOME/.config/zsh' /etc/zshenv 2>/dev/null; then
-  echo "Set ZDOTDIR in /etc/zshenv (requires sudo):"
-  echo '  echo "ZDOTDIR=\$HOME/.config/zsh" | sudo tee /etc/zshenv'
-fi
+ensure_homebrew() {
+  have brew && return 0
+  log "installing Homebrew"
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  brew_shellenv
+  have brew || die "Homebrew install finished but brew is not on PATH"
+}
 
-echo "==> tmux plugin manager (TPM)"
-TPM="$CONFIG/tmux/.tmux/plugins/tpm"
-if [[ ! -d "$TPM" ]]; then
-  git clone https://github.com/tmux-plugins/tpm "$TPM"
-else
-  echo "TPM already installed at $TPM"
-fi
+install_packages() {
+  log "installing packages ($PLATFORM${DISTRO:+ / $DISTRO})"
 
-echo "==> neovim plugins"
-if command -v nvim >/dev/null 2>&1; then
+  case "$PLATFORM" in
+    macos)
+      ensure_homebrew
+      brew update
+      brew install git zsh tmux neovim starship lazygit gh \
+        lua-language-server rust-analyzer node
+      ;;
+    linux)
+      case "$DISTRO" in
+        ubuntu|debian|pop|linuxmint)
+          sudo apt-get update
+          sudo apt-get install -y \
+            git zsh tmux neovim curl ca-certificates \
+            lua-language-server nodejs npm
+          if ! have gh; then
+            log "installing GitHub CLI (apt repo)"
+            sudo mkdir -p -m 755 /etc/apt/keyrings
+            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+              | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null
+            sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+              | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
+            sudo apt-get update
+            sudo apt-get install -y gh
+          fi
+          if ! have lazygit; then
+            sudo apt-get install -y lazygit 2>/dev/null || install_lazygit_release
+          fi
+          if ! have starship; then
+            install_starship_release
+          fi
+          if ! have rust-analyzer; then
+            if have rustup; then
+              rustup component add rust-analyzer
+            else
+              warn "rust-analyzer not installed; install rustup for Rust LSP support"
+            fi
+          fi
+          ;;
+        fedora|rhel|centos)
+          sudo dnf install -y \
+            git zsh tmux neovim curl \
+            lua-language-server nodejs npm \
+            gh lazygit starship rust-analyzer
+          ;;
+        arch|manjaro)
+          sudo pacman -Sy --needed --noconfirm \
+            git zsh tmux neovim curl \
+            lua-language-server nodejs npm \
+            github-cli lazygit starship rust-analyzer
+          ;;
+        *)
+          die "unsupported Linux distro: ${DISTRO:-unknown}"
+          ;;
+      esac
+      ;;
+  esac
+}
+
+install_starship_release() {
+  log "installing starship (upstream installer)"
+  curl -fsSL https://starship.rs/install.sh | sh -s -- -y
+}
+
+install_lazygit_release() {
+  log "installing lazygit (GitHub release)"
+  local os_label arch asset url
+  case "$(uname -s)" in
+    Darwin) os_label=Darwin ;;
+    Linux) os_label=Linux ;;
+    *) die "unsupported OS for lazygit install: $(uname -s)" ;;
+  esac
+  case "$(uname -m)" in
+    x86_64|amd64) arch=x86_64 ;;
+    arm64|aarch64) arch=arm64 ;;
+    *) die "unsupported architecture for lazygit: $(uname -m)" ;;
+  esac
+  asset="lazygit_${os_label}_${arch}.tar.gz"
+  url="https://github.com/jesseduffield/lazygit/releases/latest/download/${asset}"
+  mkdir -p "$BIN"
+  curl -fsSL "$url" | tar -xz -C "$BIN" lazygit
+  export PATH="$BIN:$PATH"
+}
+
+install_npm_lsps() {
+  if ! have npm; then
+    warn "npm not found; skipping JS/Python LSP packages"
+    return 0
+  fi
+  log "installing npm language servers"
+  npm install -g pyright typescript typescript-language-server \
+    vscode-langservers-extracted
+}
+
+setup_zshenv() {
+  if [[ -f /etc/zshenv ]] && grep -q 'ZDOTDIR=\$HOME/.config/zsh' /etc/zshenv; then
+    log "/etc/zshenv already configured"
+    return 0
+  fi
+
+  log "configuring /etc/zshenv (requires sudo)"
+  sudo tee /etc/zshenv >/dev/null <<'EOF'
+export ZDOTDIR=$HOME/.config/zsh
+export XDG_CONFIG_HOME=$HOME/.config
+export GIT_CONFIG_GLOBAL=$HOME/.config/git/config
+EOF
+}
+
+install_zap() {
+  if [[ -f "${DATA}/zap/zap.zsh" ]]; then
+    log "zap already installed"
+    return 0
+  fi
+
+  log "installing zap"
+  zsh <(curl -fsSL https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1
+}
+
+install_tpm() {
+  local tpm="${CONFIG}/tmux/.tmux/plugins/tpm"
+  if [[ -d "$tpm" ]]; then
+    log "TPM already installed"
+    return 0
+  fi
+
+  log "installing tmux plugin manager (TPM)"
+  git clone https://github.com/tmux-plugins/tpm "$tpm"
+}
+
+sync_nvim_plugins() {
+  if ! have nvim; then
+    warn "nvim not found; skipping plugin sync"
+    return 0
+  fi
+
+  log "syncing neovim plugins"
   nvim --headless "+lua vim.cmd('packadd vim.pack'); vim.pack.sync()" +qa
-else
-  echo "nvim not found; skip plugin sync"
-fi
+}
 
-echo "==> done"
+main() {
+  detect_platform
+  install_packages
+  install_npm_lsps
+  setup_zshenv
+  install_zap
+  install_tpm
+  sync_nvim_plugins
+  log "done — open a new login shell (or run: exec zsh -l)"
+}
+
+main "$@"
