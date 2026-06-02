@@ -13,7 +13,7 @@ This repository is a dotfiles repo rooted at `~/.config`. When you add, remove, 
 
 ## README expectations
 
-- Keep **What's included** and **Bootstrap installs** accurate
+- Keep **What's included** and **Install script** accurate
 - List new plugins under **Plugins** with a [GitHub link](https://github.com/) and a one-line description
 - Keep **Quick start** unchanged unless the install flow changes
 

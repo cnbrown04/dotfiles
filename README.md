@@ -27,32 +27,19 @@ Bootstrap installs [Homebrew](https://brew.sh) on macOS and Linux, then uses it 
 | `cursor/` | Cursor CLI preferences |
 | `.claude/` | Claude Code permission defaults |
 
-## Bootstrap installs
+## Install script
 
-**Via Homebrew (macOS + Linux):**
+<details>
+<summary>What <code>bootstrap</code> installs</summary>
 
-- git, zsh, tmux, neovim, starship, lazygit, gh
-- lua-language-server, rust-analyzer, node, curl
+- **Homebrew** (macOS + Linux) — git, zsh, tmux, neovim, starship, lazygit, gh, lua-language-server, rust-analyzer, node, curl
+- **Ghostty + JetBrainsMono Nerd Font** — Homebrew cask on macOS; brew or distro fallback on Linux
+- **npm -g** — pyright, typescript, typescript-language-server, vscode-langservers-extracted
+- **Setup** — `/etc/zshenv`, [zap](https://github.com/zap-zsh/zap), [TPM](https://github.com/tmux-plugins/tpm), nvim plugins, ghostty platform symlink, Claude settings symlink
 
-**Via Homebrew cask (macOS) or distro fallback (Linux):**
+Log in after: `gh auth login`, Cursor CLI.
 
-- ghostty
-- JetBrainsMono Nerd Font
-
-**Via npm (global):**
-
-- pyright, typescript, typescript-language-server, vscode-langservers-extracted
-
-**Post-install setup:**
-
-- `/etc/zshenv` — ZDOTDIR, XDG paths, git config location
-- [zap](https://github.com/zap-zsh/zap) — zsh plugin manager
-- [TPM](https://github.com/tmux-plugins/tpm) — tmux plugin manager
-- Neovim plugins — `vim.pack.sync()`
-- Ghostty platform config symlink
-- Claude Code settings symlink → `~/.claude/settings.local.json`
-
-After bootstrap, log in to services manually: `gh auth login`, Cursor CLI login, etc.
+</details>
 
 ## Plugins
 
