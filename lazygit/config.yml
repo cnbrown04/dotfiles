@@ -28,3 +28,9 @@ gui:
       - "#E64D49"
     defaultFgColor:
       - "#403f53"
+
+# commit.gpgsign uses 1Password SSH signing; agent handles it without suspending lazygit
+git:
+  overrideGpg: true
+
+promptToReturnFromSubprocess: false
