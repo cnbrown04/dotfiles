@@ -56,7 +56,7 @@ install_brew_packages() {
   ensure_homebrew
   brew update
   brew install \
-    git zsh tmux neovim starship lazygit gh \
+    git zsh tmux neovim starship lazygit gh zoxide \
     lua-language-server rust-analyzer node curl
 }
 

@@ -22,6 +22,7 @@ Bootstrap installs [Homebrew](https://brew.sh) on macOS and Linux, then uses it 
 | `tmux/` | Terminal multiplexer |
 | `nvim/` | Neovim |
 | `starship/` | Shell prompt |
+| `zoxide/` | Smarter `cd` (env vars in `env.zsh`; DB is runtime data, not in repo) |
 | `lazygit/` | Git TUI |
 | `gh/` | GitHub CLI preferences |
 | `cursor/` | Cursor CLI preferences |
@@ -40,7 +41,7 @@ Run:
 
 to bootstrap your system.
 
-- **Homebrew** (macOS + Linux) — git, zsh, tmux, neovim, starship, lazygit, gh, lua-language-server, rust-analyzer, node, curl
+- **Homebrew** (macOS + Linux) — git, zsh, tmux, neovim, starship, lazygit, gh, zoxide, lua-language-server, rust-analyzer, node, curl
 - **Ghostty + JetBrainsMono Nerd Font** — Homebrew cask on macOS; brew or distro fallback on Linux
 - **npm -g** — pyright, typescript, typescript-language-server, vscode-langservers-extracted
 - **Setup** — `/etc/zshenv`, [zap](https://github.com/zap-zsh/zap), [TPM](https://github.com/tmux-plugins/tpm), nvim plugins, ghostty platform symlink, Claude settings symlink

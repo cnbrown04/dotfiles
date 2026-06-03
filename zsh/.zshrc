@@ -20,4 +20,5 @@ export GHOSTTY_CONFIG_FILE="$HOME/.config/ghostty/config"
 [ -s "/Users/caleb/.bun/_bun" ] && source "/Users/caleb/.bun/_bun"
 
 # zoxide last so chpwd hook and compdef stay correct
+[[ -f "${XDG_CONFIG_HOME}/zoxide/env.zsh" ]] && source "${XDG_CONFIG_HOME}/zoxide/env.zsh"
 eval "$(zoxide init zsh)"

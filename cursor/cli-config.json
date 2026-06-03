@@ -66,7 +66,7 @@
   "privacyCache": {
     "ghostMode": true,
     "privacyMode": 2,
-    "updatedAt": 1780500210553
+    "updatedAt": 1780500481762
   },
   "serverConfigCache": {
     "backendUrl": "https://api2.cursor.sh",
