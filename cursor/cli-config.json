@@ -7,9 +7,28 @@
       "Shell(test)",
       "Shell(echo)",
       "Shell(mkdir)",
-      "Shell(git clone)"
+      "Shell(git clone)",
+      "WebFetch(raw.githubusercontent.com)",
+      "Shell(cd)",
+      "Shell(bun install)",
+      "Shell(tail)",
+      "WebFetch(unpkg.com)",
+      "Shell(git log)",
+      "Shell(head)",
+      "Shell(which)",
+      "Shell(command)",
+      "Shell(npm install)",
+      "Shell(git branch)",
+      "Shell(git status)",
+      "Shell(git checkout)",
+      "Shell(git diff)",
+      "Shell(git show)",
+      "Shell(lazygit)"
     ],
-    "deny": []
+    "deny": [
+      "kubectl",
+      "kustomize"
+    ]
   },
   "version": 1,
   "editor": {
@@ -20,11 +39,13 @@
   "rewind": false,
   "suggestNextPrompt": false,
   "model": {
-    "modelId": "composer-2.5",
-    "displayModelId": "composer-2.5",
-    "displayName": "Composer 2.5 Fast",
-    "displayNameShort": "Composer 2.5 Fast",
-    "aliases": [],
+    "modelId": "default",
+    "displayModelId": "auto",
+    "displayName": "Auto",
+    "displayNameShort": "Auto",
+    "aliases": [
+      "auto"
+    ],
     "maxMode": false
   },
   "hasChangedDefaultModel": true,
@@ -35,33 +56,47 @@
         "id": "fast",
         "value": "true"
       }
-    ]
+    ],
+    "default": []
   },
   "selectedModel": {
-    "modelId": "composer-2.5",
-    "parameters": [
-      {
-        "id": "fast",
-        "value": "true"
-      }
-    ]
+    "modelId": "default",
+    "parameters": []
+  },
+  "privacyCache": {
+    "ghostMode": true,
+    "privacyMode": 2,
+    "updatedAt": 1780500210553
+  },
+  "serverConfigCache": {
+    "backendUrl": "https://api2.cursor.sh",
+    "authCacheKey": "auth:auth0|user_01KM3MN8FZSKQ2WQYTCAC8TWWV",
+    "agentUrlConfig": {
+      "agentUrl": "https://agentn.global.api5.cursor.sh",
+      "agentnUrl": "https://agentn.global.api5.cursor.sh"
+    },
+    "cliSandboxDefaultEnabled": false,
+    "serverHttp2Config": 0,
+    "updatedAt": 1780499944001
+  },
+  "authInfo": {
+    "email": "cnb0063@auburn.edu",
+    "displayName": "Caleb Brown",
+    "userId": 344225544,
+    "authId": "auth0|user_01KM3MN8FZSKQ2WQYTCAC8TWWV"
   },
   "network": {
     "useHttp1ForAgent": false
   },
-  "approvalMode": "unrestricted",
+  "approvalMode": "allowlist",
   "sandbox": {
     "mode": "disabled",
     "networkAccess": "user_config_with_defaults"
   },
   "showSandboxIntro": false,
+  "runEverythingSettingsPromptStreak": 1,
   "attribution": {
-    "attributeCommitsToAgent": true,
-    "attributePRsToAgent": true
-  },
-  "privacyCache": {
-    "ghostMode": true,
-    "privacyMode": 2,
-    "updatedAt": 1780431425458
+    "attributeCommitsToAgent": false,
+    "attributePRsToAgent": false
   }
 }
