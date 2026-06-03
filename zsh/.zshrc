@@ -15,3 +15,9 @@ eval "$(starship init zsh)"
 autoload -Uz compinit
 compinit
 export GHOSTTY_CONFIG_FILE="$HOME/.config/ghostty/config"
+
+# bun completions
+[ -s "/Users/caleb/.bun/_bun" ] && source "/Users/caleb/.bun/_bun"
+
+# zoxide last so chpwd hook and compdef stay correct
+eval "$(zoxide init zsh)"
