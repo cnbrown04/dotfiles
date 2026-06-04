@@ -42,11 +42,11 @@ Run:
 
 to bootstrap your system.
 
-- **Homebrew** (macOS + Linux) — git, zsh, tmux, neovim, starship, lazygit, gh, zoxide, lua-language-server, rust-analyzer, node, curl, [Docker CLI](https://www.docker.com/)
+- **Homebrew** (macOS + Linux) — git, zsh, tmux, neovim, starship, lazygit, gh, zoxide, lua-language-server, rust-analyzer, node, curl, [Docker CLI](https://www.docker.com/), [Compose](https://docs.docker.com/compose/), [Buildx](https://docs.docker.com/buildx/)
 - **Homebrew** (macOS only) — [Colima](https://colima.run) (Docker-compatible VM runtime; config in `colima/default/colima.yaml`)
 - **Ghostty + JetBrainsMono Nerd Font** — Homebrew cask on macOS; brew or distro fallback on Linux
 - **npm -g** — pyright, typescript, typescript-language-server, vscode-langservers-extracted
-- **Setup** — `/etc/zshenv`, [zap](https://github.com/zap-zsh/zap), [TPM](https://github.com/tmux-plugins/tpm), nvim plugins, ghostty platform symlink, Claude settings symlink
+- **Setup** — `/etc/zshenv`, [zap](https://github.com/zap-zsh/zap), [TPM](https://github.com/tmux-plugins/tpm), nvim plugins, ghostty platform symlink, Claude settings symlink, Docker CLI plugin path (`cliPluginsExtraDirs` → Homebrew’s `lib/docker/cli-plugins`)
 
 Log in after: `gh auth login`, Cursor CLI. On macOS, start containers with `colima start` (uses tracked config via `COLIMA_HOME`). On Linux, enable the Docker daemon for your distro (Homebrew installs the CLI only).
 

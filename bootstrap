@@ -57,9 +57,75 @@ install_brew_packages() {
   brew update
   brew install \
     git zsh tmux neovim starship lazygit gh zoxide \
-    lua-language-server rust-analyzer node curl docker
+    lua-language-server rust-analyzer node curl \
+    docker docker-compose docker-buildx
   if [[ "$PLATFORM" == macos ]]; then
     brew install colima
+  fi
+}
+
+setup_docker_cli_plugins() {
+  if ! have docker; then
+    warn "docker CLI not found; skipping plugin setup"
+    return 0
+  fi
+
+  ensure_homebrew
+  local plugins_dir
+  plugins_dir="$(brew --prefix)/lib/docker/cli-plugins"
+  if [[ ! -d "$plugins_dir" ]]; then
+    warn "missing ${plugins_dir}; run: brew install docker-compose docker-buildx"
+    return 0
+  fi
+
+  log "configuring Docker CLI plugins (compose, buildx)"
+  mkdir -p "${HOME}/.docker"
+
+  python3 - "$plugins_dir" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+extra = sys.argv[1]
+config_path = Path.home() / ".docker" / "config.json"
+
+data: dict = {}
+if config_path.is_file():
+    try:
+        data = json.loads(config_path.read_text() or "{}")
+    except json.JSONDecodeError as e:
+        print(f"error: invalid JSON in {config_path}: {e}", file=sys.stderr)
+        sys.exit(1)
+
+dirs = data.get("cliPluginsExtraDirs")
+if dirs is None:
+    dirs = []
+elif not isinstance(dirs, list):
+    print("error: cliPluginsExtraDirs must be a list", file=sys.stderr)
+    sys.exit(1)
+
+if extra not in dirs:
+    dirs.append(extra)
+data["cliPluginsExtraDirs"] = dirs
+
+config_path.write_text(json.dumps(data, indent=2) + "\n")
+PY
+
+  # Legacy manual symlinks under ~/.docker/cli-plugins are redundant once
+  # cliPluginsExtraDirs points at Homebrew's plugin directory.
+  local legacy="${HOME}/.docker/cli-plugins"
+  if [[ -d "$legacy" ]]; then
+    local name removed=0
+    for name in docker-compose docker-buildx; do
+      if [[ -L "${legacy}/${name}" ]]; then
+        rm -f "${legacy}/${name}"
+        removed=1
+      fi
+    done
+    if (( removed )); then
+      log "removed legacy ~/.docker/cli-plugins symlinks"
+    fi
+    rmdir "$legacy" 2>/dev/null || true
   fi
 }
 
@@ -221,6 +287,7 @@ suggest_default_shell() {
 main() {
   detect_platform
   install_brew_packages
+  setup_docker_cli_plugins
   install_npm_lsps
   install_ghostty
   install_ghostty_font

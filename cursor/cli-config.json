@@ -27,7 +27,8 @@
       "Shell(find)",
       "Shell(rg)",
       "Shell(grep)",
-      "WebFetch(www.better-auth.com)"
+      "WebFetch(www.better-auth.com)",
+      "Shell(brew)"
     ],
     "deny": [
       "kubectl",
@@ -70,7 +71,7 @@
   "privacyCache": {
     "ghostMode": true,
     "privacyMode": 2,
-    "updatedAt": 1780587979784
+    "updatedAt": 1780589228514
   },
   "serverConfigCache": {
     "backendUrl": "https://api2.cursor.sh",
@@ -81,7 +82,7 @@
     },
     "cliSandboxDefaultEnabled": false,
     "serverHttp2Config": 0,
-    "updatedAt": 1780587935055
+    "updatedAt": 1780589160049
   },
   "authInfo": {
     "email": "cnb0063@auburn.edu",
