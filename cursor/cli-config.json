@@ -71,7 +71,7 @@
   "privacyCache": {
     "ghostMode": true,
     "privacyMode": 2,
-    "updatedAt": 1780589228514
+    "updatedAt": 1780590594435
   },
   "serverConfigCache": {
     "backendUrl": "https://api2.cursor.sh",
@@ -82,7 +82,7 @@
     },
     "cliSandboxDefaultEnabled": false,
     "serverHttp2Config": 0,
-    "updatedAt": 1780589160049
+    "updatedAt": 1780590525463
   },
   "authInfo": {
     "email": "cnb0063@auburn.edu",
