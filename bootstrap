@@ -57,7 +57,10 @@ install_brew_packages() {
   brew update
   brew install \
     git zsh tmux neovim starship lazygit gh zoxide \
-    lua-language-server rust-analyzer node curl
+    lua-language-server rust-analyzer node curl docker
+  if [[ "$PLATFORM" == macos ]]; then
+    brew install colima
+  fi
 }
 
 install_ghostty() {

@@ -23,5 +23,13 @@ raycast/
 ghostty/macos.conf
 ghostty/linux.conf
 
+# colima runtime (COLIMA_HOME; profile colima.yaml is tracked)
+colima/ssh_config
+colima/_lima/
+colima/_templates/
+
+# docker client state (default ~/.docker; ignore if DOCKER_CONFIG points here)
+docker/
+
 # macOS
 .DS_Store
