@@ -16,6 +16,10 @@ autoload -Uz compinit
 compinit
 export GHOSTTY_CONFIG_FILE="$HOME/.config/ghostty/config"
 
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
 # bun completions
 [ -s "/Users/caleb/.bun/_bun" ] && source "/Users/caleb/.bun/_bun"
 

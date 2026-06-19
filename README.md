@@ -16,7 +16,7 @@ Bootstrap installs [Homebrew](https://brew.sh) on macOS and Linux, then uses it 
 
 | Path | Tool |
 |---|---|
-| `zsh/` | Shell (ZDOTDIR) |
+| `zsh/` | Shell (ZDOTDIR; Bun PATH/completions) |
 | `git/config` | Git global config |
 | `ghostty/` | Terminal |
 | `tmux/` | Terminal multiplexer |
