@@ -21,11 +21,11 @@ export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 # bun completions
-[ -s "/Users/caleb/.bun/_bun" ] && source "/Users/caleb/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # zoxide last so chpwd hook and compdef stay correct
 [[ -f "${XDG_CONFIG_HOME}/zoxide/env.zsh" ]] && source "${XDG_CONFIG_HOME}/zoxide/env.zsh"
 eval "$(zoxide init zsh)"
 
 # opencode
-export PATH=/Users/caleb/.opencode/bin:$PATH
+export PATH="$HOME/.opencode/bin:$PATH"
