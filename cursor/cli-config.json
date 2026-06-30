@@ -28,7 +28,21 @@
       "Shell(rg)",
       "Shell(grep)",
       "WebFetch(www.better-auth.com)",
-      "Shell(brew)"
+      "Shell(brew)",
+      "Shell(xcode-select)",
+      "Shell(xcrun)",
+      "Shell(system_profiler)",
+      "Shell(mdfind)",
+      "Shell(git rev-parse)",
+      "Shell(git stash)",
+      "Shell(git switch)",
+      "Shell(git fetch)",
+      "WebFetch(code.claude.com)",
+      "WebFetch(json.schemastore.org)",
+      "Shell(ln)",
+      "Shell(ssh)",
+      "Shell(python3)",
+      "Shell(scp)"
     ],
     "deny": [
       "kubectl",
@@ -38,6 +52,12 @@
   "version": 1,
   "editor": {
     "vimMode": false
+  },
+  "display": {
+    "showLineNumbers": false,
+    "showThinkingBlocks": true,
+    "showStatusIndicators": true,
+    "showStatusLineRunningTime": false
   },
   "notifications": true,
   "hints": true,
@@ -62,7 +82,17 @@
         "value": "true"
       }
     ],
-    "default": []
+    "default": [],
+    "gpt-5.3-codex": [
+      {
+        "id": "reasoning",
+        "value": "medium"
+      },
+      {
+        "id": "fast",
+        "value": "false"
+      }
+    ]
   },
   "selectedModel": {
     "modelId": "default",
@@ -71,7 +101,7 @@
   "privacyCache": {
     "ghostMode": true,
     "privacyMode": 2,
-    "updatedAt": 1780590594435
+    "updatedAt": 1782836138442
   },
   "serverConfigCache": {
     "backendUrl": "https://api2.cursor.sh",
@@ -82,7 +112,7 @@
     },
     "cliSandboxDefaultEnabled": false,
     "serverHttp2Config": 0,
-    "updatedAt": 1780590525463
+    "updatedAt": 1782836138251
   },
   "authInfo": {
     "email": "cnb0063@auburn.edu",
@@ -100,6 +130,7 @@
   },
   "showSandboxIntro": false,
   "runEverythingSettingsPromptStreak": 0,
+  "runEverythingSettingsPromptCooldownUntilMs": 1783196231452,
   "attribution": {
     "attributeCommitsToAgent": false,
     "attributePRsToAgent": false

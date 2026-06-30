@@ -26,7 +26,7 @@ Bootstrap installs [Homebrew](https://brew.sh) on macOS and Linux, then uses it 
 | `lazygit/` | Git TUI |
 | `gh/` | GitHub CLI preferences |
 | `cursor/` | Cursor CLI preferences |
-| `.claude/` | Claude Code permission defaults |
+| `.claude/` | Claude Code global memory (`CLAUDE.md`) and permissions — auto-allow read/search/web and safe shell; prompt for edits, installs, sudo, piped curls, and script execution; deny Kubernetes, secrets, and destructive ops |
 | `colima/` | Colima VM settings (macOS; `COLIMA_HOME` in `zsh/.zshenv`) |
 
 ## Install script
@@ -46,7 +46,7 @@ to bootstrap your system.
 - **Homebrew** (macOS only) — [Colima](https://colima.run) (Docker-compatible VM runtime; config in `colima/default/colima.yaml`)
 - **Ghostty + JetBrainsMono Nerd Font** — Homebrew cask on macOS; brew or distro fallback on Linux
 - **npm -g** — pyright, typescript, typescript-language-server, vscode-langservers-extracted
-- **Setup** — `/etc/zshenv`, [zap](https://github.com/zap-zsh/zap), [TPM](https://github.com/tmux-plugins/tpm), nvim plugins, ghostty platform symlink, Claude settings symlink, Docker CLI plugin path (`cliPluginsExtraDirs` → Homebrew’s `lib/docker/cli-plugins`)
+- **Setup** — `/etc/zshenv`, [zap](https://github.com/zap-zsh/zap), [TPM](https://github.com/tmux-plugins/tpm), nvim plugins, ghostty platform symlink, Claude settings + `CLAUDE.md` symlinks, Docker CLI plugin path (`cliPluginsExtraDirs` → Homebrew’s `lib/docker/cli-plugins`)
 
 Log in after: `gh auth login`, Cursor CLI. On macOS, start containers with `colima start` (uses tracked config via `COLIMA_HOME`). On Linux, enable the Docker daemon for your distro (Homebrew installs the CLI only).
 

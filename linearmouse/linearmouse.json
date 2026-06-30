@@ -1,0 +1,29 @@
+{
+  "$schema" : "https:\/\/schema.linearmouse.app\/0.11.2",
+  "schemes" : [
+    {
+      "buttons" : {
+        "autoScroll" : {
+          "enabled" : true,
+          "mode" : "toggle",
+          "preserveNativeMiddleClick" : true,
+          "speed" : 1,
+          "trigger" : {
+            "button" : 2
+          }
+        }
+      },
+      "if" : {
+        "device" : {
+          "category" : "mouse",
+          "productID" : "0xfa60",
+          "productName" : "2.4G Wireless Device",
+          "vendorID" : "0x1d57"
+        }
+      },
+      "pointer" : {
+        "disableAcceleration" : true
+      }
+    }
+  ]
+}

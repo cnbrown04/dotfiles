@@ -14,3 +14,5 @@ title = "~"
 
 config-file = ?macos.conf
 config-file = ?linux.conf
+
+shell-integration-features = ssh-env,ssh-terminfo

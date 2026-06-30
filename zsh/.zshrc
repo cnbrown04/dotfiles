@@ -26,3 +26,6 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # zoxide last so chpwd hook and compdef stay correct
 [[ -f "${XDG_CONFIG_HOME}/zoxide/env.zsh" ]] && source "${XDG_CONFIG_HOME}/zoxide/env.zsh"
 eval "$(zoxide init zsh)"
+
+# opencode
+export PATH=/Users/caleb/.opencode/bin:$PATH

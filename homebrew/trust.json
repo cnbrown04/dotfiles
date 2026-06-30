@@ -1,0 +1,10 @@
+{
+  "trustedformulae": [
+    "authzed/tap/zed",
+    "hashicorp/tap/vault"
+  ],
+  "trustedcasks": [
+    "sorkila/lockpaw/lockpaw",
+    "tabularisdb/tabularis/tabularis"
+  ]
+}

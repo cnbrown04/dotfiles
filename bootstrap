@@ -235,14 +235,23 @@ EOF
 setup_claude() {
   local src="${CONFIG}/.claude/settings.local.json"
   local dest="${HOME}/.claude/settings.local.json"
+  local claude_md_src="${CONFIG}/.claude/CLAUDE.md"
+  local claude_md_dest="${HOME}/.claude/CLAUDE.md"
 
-  if [[ ! -f "$src" ]]; then
+  if [[ ! -f "$src" ]] && [[ ! -f "$claude_md_src" ]]; then
     return 0
   fi
 
   log "linking Claude Code settings"
   mkdir -p "${HOME}/.claude"
-  ln -sf "$src" "$dest"
+
+  if [[ -f "$src" ]]; then
+    ln -sf "$src" "$dest"
+  fi
+
+  if [[ -f "$claude_md_src" ]]; then
+    ln -sf "$claude_md_src" "$claude_md_dest"
+  fi
 }
 
 install_zap() {
