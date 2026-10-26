@@ -1,7 +1,7 @@
 README.md
 
 # runtime state / secrets that live next to managed files, never managed
-.config/opencode
+.config/opencode/service.json
 .config/sops
 .config/gh/hosts.yml
 .config/wayvnc

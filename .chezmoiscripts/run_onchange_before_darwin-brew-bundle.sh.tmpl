@@ -9,6 +9,9 @@ if ! command -v brew >/dev/null 2>&1; then
     echo "chezmoi: Homebrew isn't installed, skipping packages (https://brew.sh, then chezmoi apply)" >&2
     exit 0
 fi
+# third-party tap entries have to be trusted before Homebrew will load them
+brew trust --quiet --formula anomalyco/tap/opencode-v2
+brew trust --quiet --cask nikitabobko/tap/aerospace
 brew bundle --file=/dev/stdin <<'BREWFILE'
 brew "git"
 brew "gh"
@@ -21,6 +24,7 @@ brew "fzf"
 brew "lazygit"
 brew "superfile"
 brew "lua-language-server"
+brew "anomalyco/tap/opencode-v2"
 cask "ghostty"
 cask "1password"
 cask "font-jetbrains-mono-nerd-font"
