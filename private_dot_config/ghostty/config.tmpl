@@ -8,6 +8,10 @@ font-size = 12
 # Ghostty's built-in default background is #282c34 (blue-gray), which looked gray at higher opacity.
 background = #1a1a1a
 background-opacity = 0.5
+{{- if eq .chezmoi.os "darwin" }}
+# No compositor blur on macOS, so Ghostty blurs its own background (true = its default radius, 20)
+background-blur = true
+{{- end }}
 # Popups (Neovim floats, tmux popups such as lazygit) paint the marker background #1a1a1b; this shader
 # renders it as #1a1a1a at 75% opacity, since Ghostty itself has only one window-wide opacity.
 custom-shader = ~/.config/ghostty/shaders/popup-opacity.glsl
