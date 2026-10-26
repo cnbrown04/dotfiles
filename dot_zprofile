@@ -1,0 +1,8 @@
+# Homebrew (macOS: /opt/homebrew on Apple silicon, /usr/local on Intel; Linuxbrew if present)
+for brew in /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+    [ -x "$brew" ] && eval "$("$brew" shellenv)" && break
+done
+unset brew
+
+# zsh login shells don't read ~/.profile; load it so PATH (~/.local/bin) matches bash/greetd.
+emulate sh -c '. ~/.profile'

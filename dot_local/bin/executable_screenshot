@@ -1,0 +1,41 @@
+#!/bin/sh
+# screenshot region|full|window: grim capture → ~/Pictures/Screenshots + clipboard + notification.
+# Clicking the notification (or its "Annotate" button) opens the capture in Satty.
+# Bound to Print / ⇧Print / ⌃Print in ~/.config/hypr/hyprland.lua; documented in ~/config.md.
+set -eu
+
+dir="${XDG_PICTURES_DIR:-$HOME/Pictures}/Screenshots"
+mkdir -p "$dir"
+file="$dir/Screenshot $(date '+%Y-%m-%d at %H.%M.%S').png"
+
+case "${1:-region}" in
+    region)
+        # Drag a region, or click a window to snap to it (boxes of visible windows on the active workspaces)
+        workspaces=$(hyprctl -j monitors | jq -c '[.[].activeWorkspace.id]')
+        windows=$(hyprctl -j clients | jq -r --argjson ws "$workspaces" \
+            '.[] | select(.workspace.id as $w | $ws | index($w)) | select(.hidden | not)
+                 | "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
+        geom=$(printf '%s\n' "$windows" | slurp -d -b '#00000055' -c '#ffffffcc' -s '#ffffff10' -w 1) || exit 0
+        grim -g "$geom" "$file" ;;
+    full)
+        # The monitor the mouse is on, like macOS's per-display capture
+        grim -o "$(hyprctl -j monitors | jq -r '.[] | select(.focused) | .name')" "$file" ;;
+    window)
+        geom=$(hyprctl -j activewindow | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
+        grim -g "$geom" "$file" ;;
+    *)
+        echo "usage: screenshot [region|full|window]" >&2; exit 2 ;;
+esac
+
+wl-copy --type image/png < "$file"
+
+# Wait for a click in the background so the keybind returns immediately
+(
+    action=$(notify-send -a Screenshot -i "$file" -h "string:image-path:$file" \
+        -A default=Annotate -A annotate=Annotate -A open=Show \
+        "Screenshot copied" "$(basename "$file")") || exit 0
+    case "$action" in
+        default|annotate) exec satty -f "$file" -o "${file%.png}-annotated.png" ;;
+        open) exec nautilus --select "$file" ;;
+    esac
+) > /dev/null 2>&1 &

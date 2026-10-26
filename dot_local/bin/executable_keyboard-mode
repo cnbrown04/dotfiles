@@ -1,0 +1,28 @@
+#!/bin/sh
+# Switch which physical key acts as Cmd (see keyd-hypr-mapper).
+#   keyboard-mode mac     Super/Meta key is Cmd  (keyboard in Mac mode, Apple keyboards)
+#   keyboard-mode pc      Alt key next to space is Cmd, Win key is Opt (keyboard in Windows mode)
+#   keyboard-mode toggle  switch between the two
+#   keyboard-mode         print the current mode
+set -e
+file="$HOME/.config/keyboard-mode"
+current=$(cat "$file" 2>/dev/null || echo mac)
+
+case "${1:-status}" in
+    mac|pc) mode=$1 ;;
+    toggle) [ "$current" = pc ] && mode=mac || mode=pc ;;
+    status) echo "$current"; exit 0 ;;
+    *) echo "usage: keyboard-mode [mac|pc|toggle]" >&2; exit 2 ;;
+esac
+
+echo "$mode" > "$file"
+pkill -HUP -f '^python3 .*/keyd-hypr-mapper$' \
+    || echo "keyd-hypr-mapper isn't running; mode applies at next login" >&2
+
+if [ "$mode" = pc ]; then
+    msg="Cmd = Alt key next to space (keyboard in Windows mode)"
+else
+    msg="Cmd = Super/Meta key (keyboard in Mac mode)"
+fi
+command -v notify-send >/dev/null && notify-send -a Keyboard "Keyboard mode: $mode" "$msg"
+echo "$mode: $msg"

@@ -1,0 +1,12 @@
+# Plugin managers, cloned on apply and pulled weekly.
+[".local/share/zap"]
+    type = "git-repo"
+    url = "https://github.com/zap-zsh/zap.git"
+    refreshPeriod = "168h"
+    clone.args = ["--branch", "release-v1", "--depth", "1"]
+
+[".config/tmux/.tmux/plugins/tpm"]
+    type = "git-repo"
+    url = "https://github.com/tmux-plugins/tpm.git"
+    refreshPeriod = "168h"
+    clone.args = ["--depth", "1"]

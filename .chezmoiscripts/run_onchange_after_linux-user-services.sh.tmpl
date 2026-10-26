@@ -1,0 +1,12 @@
+{{ if and (eq .chezmoi.os "linux") (lookPath "systemctl") -}}
+#!/bin/sh
+# Enable the user services chezmoi installed on this machine (see .chezmoiignore for which).
+# Reruns when a unit changes:
+# iris.service {{ include "private_dot_config/systemd/user/iris.service" | sha256sum }}
+# onekey.service {{ include "private_dot_config/systemd/user/onekey.service" | sha256sum }}
+systemctl --user daemon-reload || exit 0
+for unit in iris.service onekey.service; do
+    [ -f "$HOME/.config/systemd/user/$unit" ] && systemctl --user enable "$unit"
+done
+exit 0
+{{ end -}}

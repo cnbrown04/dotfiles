@@ -1,0 +1,14 @@
+[Default Applications]
+text/html=brave-browser.desktop
+x-scheme-handler/http=brave-browser.desktop
+x-scheme-handler/https=brave-browser.desktop
+x-scheme-handler/about=brave-browser.desktop
+x-scheme-handler/unknown=brave-browser.desktop
+x-scheme-handler/cider=cider.desktop
+x-scheme-handler/itms=cider.desktop
+x-scheme-handler/itmss=cider.desktop
+x-scheme-handler/music=cider.desktop
+x-scheme-handler/itunes=cider.desktop
+x-scheme-handler/anytype=anytype.desktop
+
+[Added Associations]

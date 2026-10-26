@@ -1,0 +1,22 @@
+# hypridle: locks with hyprlock when idle. Desktop machine, so no backlight listeners.
+general {
+    lock_cmd = pidof hyprlock || hyprlock                             # avoid starting multiple hyprlock instances
+    before_sleep_cmd = loginctl lock-session                          # lock before suspend
+    after_sleep_cmd = hyprctl dispatch 'hl.dsp.dpms({action = "on"})' # screens back on after resume
+}
+
+listener {
+    timeout = 600                                                 # 10 min
+    on-timeout = loginctl lock-session
+}
+
+listener {
+    timeout = 900                                                 # 15 min
+{{- $mon := dig "hosts" .chezmoi.hostname "idle_dpms_monitor" "" . }}
+{{- if $mon }}
+    on-timeout = hyprctl dispatch 'hl.dsp.dpms({action = "off", monitor = "{{ $mon }}"})' # one monitor only (see .chezmoidata/hosts.toml): turning the LG off makes it drop its DP link, which strands wayvnc
+{{- else }}
+    on-timeout = hyprctl dispatch 'hl.dsp.dpms({action = "off"})'
+{{- end }}
+    on-resume = hyprctl dispatch 'hl.dsp.dpms({action = "on"})'
+}

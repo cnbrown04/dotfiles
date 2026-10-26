@@ -1,0 +1,29 @@
+# Per-machine hardware settings, keyed by short hostname (`hostname -s`).
+# A machine that isn't listed gets the generic defaults in the templates
+# (one wallpaper on every monitor, auto monitor layout, no pinned workspaces).
+
+[hosts.hephaestus]
+# Hyprland workspace 1 / 2 (matched by description, connector names move around)
+primary_monitor = "desc:Dell Inc. AW3425DWM"
+secondary_monitor = "desc:LG Electronics LG ULTRAGEAR"
+# wayvnc serves the LG; hypridle only powers off the Dell (the LG dropping its
+# DP link strands wayvnc)
+wayvnc_output = "DP-4"
+idle_dpms_monitor = "DP-5"
+# /etc/udev/rules.d/61-gpu-symlinks.rules, so Hyprland only uses the 3080
+drm_devices = "/dev/dri/nvidia-dgpu"
+wallpaper = "~/Pictures/wallpapers/rotation/1080p/bierstadt-1080p.jpg"
+
+# Seed for ~/.config/hypr/monitors.lua (written once, monique owns it after that)
+[[hosts.hephaestus.monitors]]
+comment = "LG UltraGear 1920x1080, left"
+output = "desc:LG Electronics LG ULTRAGEAR"
+mode = "1920x1080@164.96"
+position = "0x0"
+
+[[hosts.hephaestus.monitors]]
+comment = "Alienware AW3425DWM 3440x1440 ultrawide, right of the LG"
+output = "desc:Dell Inc. AW3425DWM"
+mode = "3440x1440@179.99"
+position = "1920x0"
+wallpaper = "~/Pictures/wallpapers/rotation/ultrawide/bierstadt-ultrawide.jpg"

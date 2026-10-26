@@ -1,0 +1,27 @@
+# Ghostty config. Full reference: ghostty +show-config --default --docs
+font-family = JetBrainsMono Nerd Font
+# Fallback for symbols JetBrains Mono lacks (e.g. Claude Code's ⏺ U+23FA marker)
+font-family = Noto Sans Symbols2
+font-size = 12
+# No theme: Ghostty's default colors, except the background: near-black #1a1a1a (black lightened ~10%) at 50% opacity
+# (a light smoked tint over the wallpaper, blurred by Hyprland's decoration.blur in hyprland.lua).
+# Ghostty's built-in default background is #282c34 (blue-gray), which looked gray at higher opacity.
+background = #1a1a1a
+background-opacity = 0.5
+# Popups (Neovim floats, tmux popups such as lazygit) paint the marker background #1a1a1b; this shader
+# renders it as #1a1a1a at 75% opacity, since Ghostty itself has only one window-wide opacity.
+custom-shader = ~/.config/ghostty/shaders/popup-opacity.glsl
+custom-shader-animation = false
+window-padding-x = 8
+window-padding-y = 8
+{{- if eq .chezmoi.os "linux" }}
+# Hyprland tiles/decorates windows, so drop Ghostty's own titlebar
+window-decoration = none
+{{- end }}
+confirm-close-surface = false
+
+# Cmd+V fallback (Shift+Insert) pastes the clipboard, not the primary selection
+keybind = shift+insert=paste_from_clipboard
+
+# Disable the "Copied to clipboard" toast that pops up at the bottom of the window on copy
+app-notifications = no-clipboard-copy

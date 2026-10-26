@@ -1,0 +1,51 @@
+# ~/.zshrc: zsh + Zap plugins + starship + zoxide.
+# Managed by chezmoi: edit with `chezmoi edit ~/.zshrc` (or edit here, then `chezmoi re-add`).
+
+# History
+HISTFILE=~/.zsh_history
+HISTSIZE=50000
+SAVEHIST=50000
+setopt SHARE_HISTORY HIST_IGNORE_ALL_DUPS HIST_IGNORE_SPACE
+
+# Zap plugin manager (~/.local/share/zap, branch release-v1). Update plugins: zap update
+[ -f "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh" ] && source "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh"
+
+# Plugins
+plug "zsh-users/zsh-autosuggestions"
+plug "zap-zsh/supercharge"
+plug "zsh-users/zsh-syntax-highlighting"
+
+# Load and initialise completion system
+autoload -Uz compinit
+compinit
+
+# Keys. keyd sends Home/End for Cmd+Left/Right, and zsh doesn't bind those by default.
+bindkey -e
+bindkey '^[[H'  beginning-of-line   # Home
+bindkey '^[[1~' beginning-of-line
+bindkey '^[OH'  beginning-of-line
+bindkey '^[[F'  end-of-line         # End
+bindkey '^[[4~' end-of-line
+bindkey '^[OF'  end-of-line
+bindkey '^[[3~' delete-char         # Delete
+bindkey '^[[1;5C' forward-word      # Ctrl+Right
+bindkey '^[[1;5D' backward-word     # Ctrl+Left
+bindkey '^[[1;3C' forward-word      # Opt+Right
+bindkey '^[[1;3D' backward-word     # Opt+Left
+
+export EDITOR=nvim VISUAL=nvim
+# GNU ls (Linux) takes --color; older BSD ls (macOS) wants -G
+if ls --color=auto -d . >/dev/null 2>&1; then alias ls='ls --color=auto'; else alias ls='ls -G'; fi
+alias grep='grep --color=auto'
+alias vim=nvim
+
+# Temporary passwordless sudo for Claude Code sessions; remove it afterwards with claude-unsudo
+function claude-sudo { echo "$USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/99-claude-temp >/dev/null && sudo chmod 440 /etc/sudoers.d/99-claude-temp && echo 'temporary sudo rule added'; }
+alias claude-unsudo="sudo rm -f /etc/sudoers.d/99-claude-temp && echo 'temporary sudo rule removed'"
+
+(( $+commands[mise] ))     && eval "$(mise activate zsh)"    # per-directory tool versions; configure in ~/.config/mise/config.toml
+(( $+commands[zoxide] ))   && eval "$(zoxide init zsh)"     # z <dir>, zi (interactive, uses fzf)
+(( $+commands[starship] )) && eval "$(starship init zsh)"   # prompt; configure in ~/.config/starship.toml
+
+# opencode
+[ -d "$HOME/.opencode/bin" ] && export PATH="$HOME/.opencode/bin:$PATH"

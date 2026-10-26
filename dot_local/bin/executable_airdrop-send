@@ -1,0 +1,4 @@
+#!/bin/sh
+# airdrop-mt7921's airdrop-send with /usr/sbin on PATH: it calls iw directly, and Debian
+# keeps sbin off the user PATH (the Quickshell session, Nautilus scripts).
+PATH="$PATH:/usr/sbin" exec "$HOME/.local/share/airdrop/airdrop-mt7921/daemon/airdrop-send" "$@"

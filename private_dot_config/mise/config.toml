@@ -1,0 +1,4 @@
+[tools]
+kubectl = "1.37.1"
+# Global mise config (tools, env and tasks for the desktop).
+# Task scripts live in ~/.config/mise/tasks/*.  See ~/config.md 1.20.

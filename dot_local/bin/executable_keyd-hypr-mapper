@@ -1,0 +1,134 @@
+#!/usr/bin/env python3
+"""Runtime keyd bindings for Hyprland: per-app Cmd mappings + keyboard mode.
+
+keyd (/etc/keyd/default.conf + macos-layers) provides the macOS-style Cmd layer.
+This daemon adjusts it while you work, using `keyd bind` (needs the 'keyd' group):
+
+  * Focused window is a terminal -> Cmd+<letter> becomes Ctrl+Shift+<letter>
+    (Cmd+C/V copy/paste, Cmd+T/W/N tabs/windows), so Ctrl+C still interrupts.
+  * Any other window             -> Cmd+<letter> becomes Ctrl+<letter> (Cmd+C = Ctrl+C, ...).
+  * Keyboard mode (~/.config/keyboard-mode, set with `keyboard-mode`):
+      mac -> the Super/Meta key is Cmd (keyboards in Mac mode, Apple keyboards)
+      pc  -> the Alt key (next to space) is Cmd and the Win key is Opt
+    Opt always sends Alt, which is Hyprland's window-manager key.
+
+SIGHUP re-reads the mode file and re-applies everything. Started from hyprland.lua.
+"""
+import json
+import os
+import signal
+import socket
+import subprocess
+import sys
+import time
+
+KEYD = "keyd.rvaiya"
+MODE_FILE = os.path.expanduser("~/.config/keyboard-mode")
+
+TERMINALS = {
+    "com.mitchellh.ghostty", "kitty", "foot", "footclient", "Alacritty",
+    "org.wezfurlong.wezterm", "org.gnome.Console", "org.gnome.Terminal", "xterm",
+}
+
+# Cmd+<key> in the meta_mac layer that become app shortcuts (see /etc/keyd/macos-layers).
+# Q and T are here so terminals get Ctrl+Shift+Q/T (quit, new tab); the layer sends Ctrl+<key> for the rest.
+APP_KEYS = "abcdefgiknopqrstuvwxyz"
+
+MODE_BINDS = {
+    "mac": ["leftmeta = layer(meta_mac)", "rightmeta = layer(meta_mac)",
+            "leftalt = layer(alt)", "rightalt = layer(alt)"],
+    "pc":  ["leftalt = layer(meta_mac)", "rightalt = layer(meta_mac)",
+            "leftmeta = layer(alt)", "rightmeta = layer(alt)"],
+}
+
+
+def app_binds(terminal):
+    mod = "C-S-" if terminal else "C-"
+    return [f"meta_mac.{k} = {mod}{k}" for k in APP_KEYS]
+
+
+def read_mode():
+    try:
+        mode = open(MODE_FILE).read().strip()
+    except OSError:
+        mode = "mac"
+    return mode if mode in MODE_BINDS else "mac"
+
+
+def keyd_bind(binds):
+    r = subprocess.run([KEYD, "bind", *binds], capture_output=True, text=True)
+    if r.returncode != 0:
+        print(f"keyd bind failed: {r.stderr.strip() or r.stdout.strip()}", file=sys.stderr, flush=True)
+    return r.returncode == 0
+
+
+state = {"terminal": None, "mode": None}
+
+
+def apply(terminal, force=False):
+    mode = read_mode()
+    binds = []
+    if force or mode != state["mode"]:
+        binds += MODE_BINDS[mode]
+    if force or terminal != state["terminal"]:
+        binds += app_binds(terminal)
+    if binds and keyd_bind(binds):
+        state["mode"], state["terminal"] = mode, terminal
+
+
+def focused_is_terminal(sig):
+    """Ask Hyprland which window is focused right now (used at startup)."""
+    try:
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        sock.connect(f"{os.environ['XDG_RUNTIME_DIR']}/hypr/{sig}/.socket.sock")
+        sock.sendall(b"j/activewindow")
+        reply = b""
+        while chunk := sock.recv(65536):
+            reply += chunk
+        sock.close()
+        return json.loads(reply or b"{}").get("class", "") in TERMINALS
+    except (OSError, ValueError):
+        return False
+
+
+def on_hup(*_):
+    apply(bool(state["terminal"]), force=True)
+
+
+def main():
+    sig = os.environ.get("HYPRLAND_INSTANCE_SIGNATURE")
+    if not sig:
+        sys.exit("HYPRLAND_INSTANCE_SIGNATURE not set; run this from Hyprland")
+    path = f"{os.environ['XDG_RUNTIME_DIR']}/hypr/{sig}/.socket2.sock"
+
+    signal.signal(signal.SIGHUP, on_hup)
+    apply(focused_is_terminal(sig), force=True)
+
+    while True:
+        try:
+            sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            sock.connect(path)
+        except OSError:
+            if not os.path.exists(path):
+                return  # Hyprland is gone
+            time.sleep(1)
+            continue
+        buf = b""
+        while True:
+            try:
+                chunk = sock.recv(4096)
+            except InterruptedError:
+                continue
+            if not chunk:
+                break
+            buf += chunk
+            *lines, buf = buf.split(b"\n")
+            for line in lines:
+                event, _, data = line.decode(errors="replace").partition(">>")
+                if event == "activewindow":
+                    apply(data.split(",", 1)[0] in TERMINALS)
+        sock.close()
+
+
+if __name__ == "__main__":
+    main()

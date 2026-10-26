@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# mise run approvals: the runs waiting on the GitHub deployment approvals of
+# homelab-iac, as plain text. See ~/Developer/iris and ~/config.md 1.20.
+exec "$HOME/.local/bin/iris" list "$@"

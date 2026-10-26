@@ -1,0 +1,24 @@
+-- Monitor layout. Positions are pinned (not "auto") because the ultrawide drops off the bus
+-- when it sleeps; with "auto" it came back on the other side and the layout shifted.
+-- Monitors are matched by description, not connector: the DP-N names change when cables
+-- are moved (2026-10-11 the ultrawide went DP-6 -> DP-5 and the LG DP-5 -> DP-4).
+-- monique (Vicinae -> Monique) overwrites this file when you save a layout/profile.
+-- (chezmoi only writes this file when it doesn't exist yet, seeded from .chezmoidata/hosts.toml.)
+{{- range (dig "hosts" .chezmoi.hostname "monitors" list .) }}
+
+-- {{ get . "comment" | default .output }}
+hl.monitor({
+    output   = {{ .output | quote }},
+    mode     = {{ .mode | quote }},
+    position = {{ .position | quote }},
+    scale    = {{ get . "scale" | default 1 }},
+})
+{{- end }}
+
+-- Anything else that gets plugged in
+hl.monitor({
+    output   = "",
+    mode     = "highrr",
+    position = "auto",
+    scale    = 1,
+})

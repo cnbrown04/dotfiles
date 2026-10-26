@@ -1,0 +1,5 @@
+# Everything reads its config from ~/.config, macOS included (lazygit, superfile, ...
+# otherwise use ~/Library/Application Support there).
+export XDG_CONFIG_HOME="$HOME/.config"
+
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"

@@ -1,0 +1,15 @@
+# Satty: screenshot annotation editor (opened from the `screenshot` notification). See ~/config.md.
+[general]
+# Saving writes "<name>-annotated.png" next to the original (the screenshot script passes -o)
+early-exit = true                  # close after copy/save
+corner-roundness = 12
+initial-tool = "arrow"
+copy-command = "wl-copy"
+annotation-size-factor = 1
+actions-on-enter = ["save-to-clipboard", "save-to-file", "exit"]
+actions-on-escape = ["exit"]
+no-window-decoration = true
+
+[font]
+family = "JetBrains Mono"
+style = "Bold"

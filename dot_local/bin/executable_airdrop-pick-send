@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+# File picker for AirDrop sends (Control Center -> AirDrop -> Send File…).
+# Gtk.FileDialog goes through xdg-desktop-portal, so this is the normal GTK picker.
+# Hands the chosen files to airdrop-send, which posts progress notifications.
+import os
+import sys
+
+import gi
+gi.require_version("Gtk", "4.0")
+from gi.repository import Gio, GLib, Gtk
+
+
+def main():
+    app = Gtk.Application(application_id="dev.hephaestus.AirDropPicker",
+                          flags=Gio.ApplicationFlags.NON_UNIQUE)
+    chosen = []
+
+    def on_activate(app):
+        app.hold()
+        dialog = Gtk.FileDialog(title="Send with AirDrop", accept_label="Send",
+                                initial_folder=Gio.File.new_for_path(os.path.expanduser("~")))
+
+        def done(dialog, result):
+            try:
+                files = dialog.open_multiple_finish(result)
+                chosen.extend(f.get_path() for f in files if f.get_path())
+            except GLib.Error:
+                pass  # cancelled
+            app.release()
+
+        dialog.open_multiple(None, None, done)
+
+    app.connect("activate", on_activate)
+    app.run([])
+    if chosen:
+        os.execvp("airdrop-send", ["airdrop-send", *chosen])
+
+
+if __name__ == "__main__":
+    sys.exit(main())

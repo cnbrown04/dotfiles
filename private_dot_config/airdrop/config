@@ -1,0 +1,16 @@
+# airdrop-mt7921 settings. Sourced by airdrop.sh and airdropd.
+# Use ${VAR:-value} so a real environment variable still wins.
+
+# exclusive: AirDrop takes the whole Wi-Fi card while it is on (fine on a machine on
+# ethernet, nothing is lost) and hands it back after a transfer.
+AIRDROP_MODE="${AIRDROP_MODE:-exclusive}"
+
+# Two-letter country. Needed once Wi-Fi is down, or channel 149 is
+# transmit-forbidden and the phone never hears this machine.
+AIRDROP_REG="${AIRDROP_REG:-US}"
+
+# Name shown on the phone. No apostrophes (it goes into a TLS cert subject).
+AIRDROP_NAME="${AIRDROP_NAME:-$(hostname -s)}"
+
+# Where received files land.
+#RECV_DIR="${RECV_DIR:-$HOME/Downloads}"

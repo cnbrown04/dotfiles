@@ -1,0 +1,15 @@
+[Unit]
+# Desktop watcher for the GitHub deployment approvals of cnbrown04/homelab-iac.
+# The project lives in ~/Developer/iris; see ~/config.md section 1.20.
+# Logs: journalctl --user -u %n -f
+Description=iris: GitHub Actions deployment approval watcher
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/iris daemon
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=%t/bus
+Restart=on-failure
+RestartSec=15
+
+[Install]
+WantedBy=default.target

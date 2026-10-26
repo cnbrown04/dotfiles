@@ -1,0 +1,44 @@
+README.md
+
+# runtime state / secrets that live next to managed files, never managed
+.config/opencode
+.config/sops
+.config/gh/hosts.yml
+.config/wayvnc
+.config/keyboard-mode
+
+{{- $hyprland := or (lookPath "Hyprland") (lookPath "hyprland") }}
+
+{{- if ne .chezmoi.os "linux" }}
+# Linux only
+.config/mimeapps.list
+.config/autostart
+.config/systemd
+.local/bin/lua-language-server
+{{- end }}
+
+{{- if not $hyprland }}
+# Hyprland desktop (only on machines that have Hyprland installed)
+.config/hypr
+.config/quickshell
+.config/vicinae
+.config/satty
+.config/monique
+.config/airdrop
+.local/bin/airdropd
+.local/bin/airdrop-pick-send
+.local/bin/airdrop-send
+.local/bin/dock-icons
+.local/bin/keyboard-mode
+.local/bin/keyd-hypr-mapper
+.local/bin/screenshot
+.local/bin/wallpaper-rotate
+{{- end }}
+
+{{- /* user services only where their program is built */}}
+{{- if not (stat (joinPath .chezmoi.homeDir ".local/bin/iris")) }}
+.config/systemd/user/iris.service
+{{- end }}
+{{- if not (stat (joinPath .chezmoi.homeDir "Developer/1Key-Reflash/app/target/debug/onekey")) }}
+.config/systemd/user/onekey.service
+{{- end }}

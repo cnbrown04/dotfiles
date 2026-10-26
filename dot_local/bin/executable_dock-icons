@@ -1,0 +1,196 @@
+#!/usr/bin/env -S ${HOME}/.local/share/dock-icons/venv/bin/python
+"""Pre-render uniform macOS-style dock icons for the Quickshell dock.
+
+For every installed app (desktop entries):
+  * if the MacTahoe icon theme has the icon, it's used as-is (already macOS-style);
+  * otherwise the best other icon (largest PNG, or SVG rendered at 512px) is trimmed and normalized to
+    match MacTahoe: icons that already fill a square are re-cut to a squircle, free-form icons are
+    centered on a light gradient squircle tile; same 87.5% size and soft shadow as MacTahoe tiles.
+Output: ~/.cache/dock-icons/<icon-name>.png (256x256). The dock falls back to the raw icon on a tile
+when a file is missing.
+
+Usage: dock-icons [--force] [--quiet]   (--force re-renders existing files)
+"""
+import glob
+import os
+import subprocess
+import sys
+import tempfile
+
+from PIL import Image, ImageChops, ImageDraw, ImageFilter
+
+SIZE = 256              # output size
+SS = 4                  # supersampling for smooth squircle edges
+MARGIN = 0.0625         # transparent margin around the squircle; matches MacTahoe's 87.5% tile
+GLYPH = 0.58            # free-form icon size on the tile (fraction of SIZE)
+FULL_TILE_FILL = 0.88   # trimmed icon at least this opaque -> treat as an already-square tile
+EXPONENT = 4.8          # superellipse exponent; gives corners 0.229 of the tile, matching MacTahoe
+
+OUT = os.path.expanduser("~/.cache/dock-icons")
+ICON_ROOTS = [os.path.expanduser("~/.local/share/icons"), "/usr/local/share/icons", "/usr/share/icons"]
+PREFERRED_THEMES = ["MacTahoe-dark", "MacTahoe"]   # used as-is when they have the icon
+THEMES = ["hicolor", "Adwaita"]
+APP_DIRS = [os.path.expanduser("~/.local/share/applications"), "/usr/local/share/applications",
+            "/usr/share/applications"]
+
+
+def squircle_mask(size):
+    """Antialiased superellipse mask."""
+    big = size * SS
+    m = Image.new("L", (big, big), 0)
+    px = m.load()
+    r = big / 2
+    for y in range(big):
+        ny = abs((y + 0.5 - r) / r) ** EXPONENT
+        if ny >= 1:
+            continue
+        nx = (1 - ny) ** (1 / EXPONENT)          # half-width of this row, normalized
+        x0, x1 = int(r - nx * r), int(r + nx * r)
+        for x in range(x0, x1):
+            px[x, y] = 255
+    return m.resize((size, size), Image.LANCZOS)
+
+
+def find_preferred(name):
+    """SVG from the MacTahoe theme (layout: <theme>/apps[@2x]/scalable/<name>.svg), or None."""
+    for root in ICON_ROOTS:
+        for theme in PREFERRED_THEMES:
+            hits = sorted(glob.glob(f"{root}/{theme}/apps*/scalable/{name}.svg")
+                          or glob.glob(f"{root}/{theme}/places*/scalable/{name}.svg"))
+            if hits:
+                return hits[0]
+    return None
+
+
+def find_icon(name):
+    """Best non-MacTahoe source file for an icon name: SVG, else the largest PNG."""
+    if os.path.isabs(name):
+        return name if os.path.exists(name) else None
+    svgs, pngs = [], []
+    for root in ICON_ROOTS:
+        for theme in THEMES:
+            base = os.path.join(root, theme)
+            svgs += glob.glob(f"{base}/scalable/*/{name}.svg")
+            pngs += glob.glob(f"{base}/*/*/{name}.png")
+    pngs += glob.glob(f"/usr/share/pixmaps/{name}.png")
+    svgs += glob.glob(f"/usr/share/pixmaps/{name}.svg")
+    svgs = [s for s in svgs if "symbolic" not in s]
+    if svgs:
+        return svgs[0]
+    if pngs:
+        return max(pngs, key=lambda p: Image.open(p).size[0])
+    return None
+
+
+def load(path, size=512):
+    if path.endswith(".svg"):
+        with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
+            subprocess.run(["rsvg-convert", "-w", str(size), "-h", str(size), "--keep-aspect-ratio", path, "-o", tmp.name],
+                           check=True, capture_output=True)
+            return Image.open(tmp.name).convert("RGBA")
+    return Image.open(path).convert("RGBA")
+
+
+def tile_background(size):
+    """Light gradient for free-form icons (matches MacTahoe's white tiles)."""
+    top, bottom = (255, 255, 255), (226, 226, 230)
+    g = Image.new("RGBA", (size, size))
+    d = ImageDraw.Draw(g)
+    for y in range(size):
+        t = y / (size - 1)
+        d.line([(0, y), (size, y)], fill=tuple(round(a + (b - a) * t) for a, b in zip(top, bottom)) + (255,))
+    return g
+
+
+def render(src_img, mask, inner):
+    alpha = src_img.getchannel("A").point(lambda a: 255 if a > 16 else 0)
+    bbox = alpha.getbbox()
+    if not bbox:
+        return None
+    img = src_img.crop(bbox)
+    w, h = img.size
+    fill = sum(img.getchannel("A").histogram()[129:]) / (w * h)
+    square = 0.9 < w / h < 1.1
+
+    out = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
+    if square and fill >= FULL_TILE_FILL:
+        # Already a tile: fill the squircle with it
+        art = img.resize((inner, inner), Image.LANCZOS)
+        kind = "tile"
+    else:
+        # Free-form glyph: center it on a neutral tile
+        art = tile_background(inner)
+        g = GLYPH * SIZE / max(w, h)
+        glyph = img.resize((max(1, round(w * g)), max(1, round(h * g))), Image.LANCZOS)
+        art.alpha_composite(glyph, ((inner - glyph.width) // 2, (inner - glyph.height) // 2))
+        kind = "glyph"
+
+    shaped = Image.new("RGBA", (inner, inner), (0, 0, 0, 0))
+    shaped.paste(art, (0, 0), ImageChops.multiply(mask, art.getchannel("A")))
+
+    # Subtle light edge so dark icons separate from the dock
+    edge = Image.new("RGBA", (inner, inner), (255, 255, 255, 0))
+    ring = ImageChops.subtract(mask, mask.resize((inner - 4, inner - 4), Image.LANCZOS).crop((-2, -2, inner - 2, inner - 2)))
+    edge.putalpha(ring.point(lambda a: a * 0.10))
+    edge = Image.merge("RGBA", (*Image.new("RGB", (inner, inner), (0, 0, 0)).split(), edge.getchannel("A")))
+    shaped.alpha_composite(edge)
+
+    off = (SIZE - inner) // 2
+    # Soft drop shadow under the tile, like MacTahoe's
+    shadow = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
+    sm = Image.new("L", (SIZE, SIZE), 0)
+    sm.paste(mask.point(lambda a: a * 0.35), (off, off + round(SIZE * 0.012)))
+    shadow.putalpha(sm.filter(ImageFilter.GaussianBlur(SIZE * 0.012)))
+    out.alpha_composite(shadow)
+    out.alpha_composite(shaped, (off, off))
+    return out, kind
+
+
+EXTRA_ICONS = ["user-trash", "user-trash-full"]   # dock items that aren't apps
+
+
+def icon_names():
+    names = set(EXTRA_ICONS)
+    for d in APP_DIRS:
+        for f in glob.glob(f"{d}/*.desktop"):
+            for line in open(f, errors="replace"):
+                if line.startswith("Icon="):
+                    names.add(line.split("=", 1)[1].strip())
+                    break
+    return sorted(n for n in names if n)
+
+
+def main():
+    force = "--force" in sys.argv
+    quiet = "--quiet" in sys.argv
+    os.makedirs(OUT, exist_ok=True)
+    inner = round(SIZE * (1 - 2 * MARGIN))
+    mask = squircle_mask(inner)
+    for name in icon_names():
+        # Icon= is a theme name ("com.github.monique") or an absolute path ("/usr/share/pixmaps/x.png")
+        key = os.path.splitext(os.path.basename(name))[0] if os.path.isabs(name) else name
+        dest = os.path.join(OUT, key + ".png")
+        if os.path.exists(dest) and not force:
+            continue
+        preferred = None if os.path.isabs(name) else find_preferred(name)
+        if preferred:
+            load(preferred, SIZE).save(dest)
+            quiet or print(f"  theme {name}  <- {preferred}")
+            continue
+        src = find_icon(name)
+        if not src:
+            quiet or print(f"  skip  {name}: no icon file found")
+            continue
+        try:
+            result = render(load(src), mask, inner)
+        except Exception as e:  # broken/unsupported icon file
+            quiet or print(f"  skip  {name}: {e}")
+            continue
+        if result:
+            img, kind = result
+            img.save(dest)
+            quiet or print(f"  {kind:5} {name}  <- {src}")
+
+
+if __name__ == "__main__":
+    main()
