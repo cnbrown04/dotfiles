@@ -24,7 +24,7 @@ set -g focus-events on
 set -as terminal-overrides ",*:XT:focus-events"
 
 # Shell for new panes and windows.
-set -g default-shell /usr/bin/zsh
+set -g default-shell {{ lookPath "zsh" | default "/bin/zsh" }}
 
 # Prefix: Ctrl-b
 set -g prefix C-b
