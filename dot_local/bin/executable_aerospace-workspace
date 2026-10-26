@@ -1,0 +1,37 @@
+#!/bin/sh
+# Hyprland-style workspaces for AeroSpace: a workspace that's hidden and empty counts as not
+# existing, so it opens on the focused monitor; any other workspace stays on its own monitor
+# and focus jumps there. Moving a window follows it, like Hyprland's window.move.
+# Workspace "S" stands in for Hyprland's special:magic scratchpad.
+# usage: aerospace-workspace focus|move <workspace>
+#        aerospace-workspace special-toggle|special-move
+PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+action=$1 ws=${2:-S}
+
+# hidden and holding no windows (including never created)
+absent() {
+    ! aerospace list-workspaces --monitor all --visible | grep -qx "$ws" &&
+    ! aerospace list-windows --monitor all --format '%{workspace}' | grep -qx "$ws"
+}
+
+case $action in
+    focus)
+        if absent; then aerospace summon-workspace "$ws"; else aerospace workspace "$ws"; fi ;;
+    move|special-move)
+        if absent; then
+            # bring the workspace here before sending the window (a plain move shows an empty
+            # workspace wherever it was last)
+            win=$(aerospace list-windows --focused --format '%{window-id}') || exit
+            aerospace summon-workspace "$ws" &&
+            aerospace move-node-to-workspace --window-id "$win" "$ws" &&
+            aerospace focus --window-id "$win"
+        else
+            aerospace move-node-to-workspace --focus-follows-window "$ws"
+        fi ;;
+    special-toggle)
+        if [ "$(aerospace list-workspaces --focused)" = "$ws" ]; then
+            aerospace workspace-back-and-forth
+        else
+            aerospace summon-workspace "$ws"
+        fi ;;
+esac

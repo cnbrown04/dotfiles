@@ -26,6 +26,10 @@ confirm-close-surface = false
 
 # Cmd+V fallback (Shift+Insert) pastes the clipboard, not the primary selection
 keybind = shift+insert=paste_from_clipboard
+{{- if eq .chezmoi.os "darwin" }}
+# Alt+T opens a terminal from anywhere, like Hyprland's bind (needs Accessibility permission)
+keybind = global:alt+t=new_window
+{{- end }}
 
 # Disable the "Copied to clipboard" toast that pops up at the bottom of the window on copy
 app-notifications = no-clipboard-copy

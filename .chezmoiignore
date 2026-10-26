@@ -1,4 +1,5 @@
 README.md
+CLAUDE.md
 
 # runtime state / secrets that live next to managed files, never managed
 .config/opencode/service.json
@@ -12,6 +13,7 @@ README.md
 {{- if ne .chezmoi.os "darwin" }}
 # macOS only
 .aerospace.toml
+.local/bin/aerospace-workspace
 {{- end }}
 
 {{- if ne .chezmoi.os "linux" }}

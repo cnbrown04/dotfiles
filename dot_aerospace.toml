@@ -52,12 +52,19 @@ automatically-unhide-macos-hidden-apps = false
 # Fallback value (if you omit the key): persistent-workspaces = []
 persistent-workspaces = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
+# 1 on the MacBook screen (the leftmost monitor when the lid is closed), 2 and 3 on the
+# next monitors to the right (numbers count monitors left to right). A workspace whose
+# monitor isn't connected falls back to the main monitor. The rest aren't pinned, they follow
+# Hyprland rules instead (~/.local/bin/aerospace-workspace).
+# See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
+workspace-to-monitor-force-assignment = { 1 = ['built-in', 1], 2 = 2, 3 = 3 }
+
 # A callback that runs every time binding mode changes
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
 # See: https://nikitabobko.github.io/AeroSpace/commands#mode
 on-mode-changed = []
 
-focus-follows-mouse.enabled = false
+focus-follows-mouse.enabled = true  # Hyprland input.follow_mouse = 1
 
 # Possible values: (qwerty|dvorak|colemak)
 # See https://nikitabobko.github.io/AeroSpace/guide#key-mapping
@@ -71,12 +78,12 @@ key-mapping.preset = 'qwerty'
 #                 Monitor pattern is the same as for 'workspace-to-monitor-force-assignment'.
 #                 See:
 #                 https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
-gaps.inner.horizontal = 7
-gaps.inner.vertical =   7
-gaps.outer.left =       7
-gaps.outer.bottom =     7
-gaps.outer.top =        7
-gaps.outer.right =      7
+gaps.inner.horizontal = 10
+gaps.inner.vertical =   10
+gaps.outer.left =       10
+gaps.outer.bottom =     10
+gaps.outer.top =        10
+gaps.outer.right =      10
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -107,54 +114,64 @@ gaps.outer.right =      7
     # alt-enter = '''exec-and-forget osascript -e \
     # 'tell application "Terminal" to tell (do script) to activate' '''
 
-    # See: https://nikitabobko.github.io/AeroSpace/commands#layout
-    alt-slash = 'layout tiles horizontal vertical'
-    alt-comma = 'layout accordion horizontal vertical'
+    # These mirror the Hyprland binds in ~/.config/hypr/hyprland.lua (Alt is the WM key on both).
+    # Keep them in sync: a Hyprland bind gets the closest AeroSpace equivalent here.
 
-    # See: https://nikitabobko.github.io/AeroSpace/commands#focus
-    alt-h = 'focus left'
-    alt-j = 'focus down'
-    alt-k = 'focus up'
-    alt-l = 'focus right'
+    # Apps: Alt+T (new Ghostty window) is a Ghostty global keybind (ghostty/config); Cmd+Space
+    # (launcher) and Cmd+Shift+V (clipboard history) are Raycast hotkeys.
 
-    # See: https://nikitabobko.github.io/AeroSpace/commands#move
-    alt-shift-h = 'move left'
-    alt-shift-j = 'move down'
-    alt-shift-k = 'move up'
-    alt-shift-l = 'move right'
+    # Windows / session
+    alt-q = 'close'
+    alt-l = '''exec-and-forget /usr/bin/python3 -Ic 'import ctypes; ctypes.CDLL("/System/Library/PrivateFrameworks/login.framework/Versions/Current/login").SACLockScreenImmediate()' '''
+    alt-ctrl-q = '''exec-and-forget /usr/bin/python3 -Ic 'import ctypes; ctypes.CDLL("/System/Library/PrivateFrameworks/login.framework/Versions/Current/login").SACLockScreenImmediate()' '''
+    alt-shift-q = '''exec-and-forget osascript -e 'tell application "System Events" to log out' '''
+    alt-shift-space = 'layout floating tiling'
+    alt-j = 'layout horizontal vertical'  # togglesplit
 
-    # See: https://nikitabobko.github.io/AeroSpace/commands#resize
-    alt-minus = 'resize smart -50'
-    alt-equal = 'resize smart +50'
+    # Move focus with Alt + arrow keys
+    alt-left = 'focus left'
+    alt-right = 'focus right'
+    alt-up = 'focus up'
+    alt-down = 'focus down'
 
-    # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
+    # Workspaces: Alt+[0-9] switch, Alt+Shift+[0-9] move the window there and follow it.
+    # 1-3 are pinned to monitors; the rest follow Hyprland rules (see aerospace-workspace)
     alt-1 = 'workspace 1'
     alt-2 = 'workspace 2'
     alt-3 = 'workspace 3'
-    alt-4 = 'workspace 4'
-    alt-5 = 'workspace 5'
-    alt-6 = 'workspace 6'
-    alt-7 = 'workspace 7'
-    alt-8 = 'workspace 8'
-    alt-9 = 'workspace 9'
+    alt-4 = 'exec-and-forget ~/.local/bin/aerospace-workspace focus 4'
+    alt-5 = 'exec-and-forget ~/.local/bin/aerospace-workspace focus 5'
+    alt-6 = 'exec-and-forget ~/.local/bin/aerospace-workspace focus 6'
+    alt-7 = 'exec-and-forget ~/.local/bin/aerospace-workspace focus 7'
+    alt-8 = 'exec-and-forget ~/.local/bin/aerospace-workspace focus 8'
+    alt-9 = 'exec-and-forget ~/.local/bin/aerospace-workspace focus 9'
+    alt-0 = 'exec-and-forget ~/.local/bin/aerospace-workspace focus 10'
+    alt-shift-1 = 'move-node-to-workspace --focus-follows-window 1'
+    alt-shift-2 = 'move-node-to-workspace --focus-follows-window 2'
+    alt-shift-3 = 'move-node-to-workspace --focus-follows-window 3'
+    alt-shift-4 = 'exec-and-forget ~/.local/bin/aerospace-workspace move 4'
+    alt-shift-5 = 'exec-and-forget ~/.local/bin/aerospace-workspace move 5'
+    alt-shift-6 = 'exec-and-forget ~/.local/bin/aerospace-workspace move 6'
+    alt-shift-7 = 'exec-and-forget ~/.local/bin/aerospace-workspace move 7'
+    alt-shift-8 = 'exec-and-forget ~/.local/bin/aerospace-workspace move 8'
+    alt-shift-9 = 'exec-and-forget ~/.local/bin/aerospace-workspace move 9'
+    alt-shift-0 = 'exec-and-forget ~/.local/bin/aerospace-workspace move 10'
 
-    # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
-    alt-shift-1 = 'move-node-to-workspace 1'
-    alt-shift-2 = 'move-node-to-workspace 2'
-    alt-shift-3 = 'move-node-to-workspace 3'
-    alt-shift-4 = 'move-node-to-workspace 4'
-    alt-shift-5 = 'move-node-to-workspace 5'
-    alt-shift-6 = 'move-node-to-workspace 6'
-    alt-shift-7 = 'move-node-to-workspace 7'
-    alt-shift-8 = 'move-node-to-workspace 8'
-    alt-shift-9 = 'move-node-to-workspace 9'
+    # Scratchpad (Hyprland's special:magic)
+    alt-s = 'exec-and-forget ~/.local/bin/aerospace-workspace special-toggle'
+    alt-shift-s = 'exec-and-forget ~/.local/bin/aerospace-workspace special-move'
 
-    # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
+    # AeroSpace-only extras (no Hyprland bind on these keys)
+    alt-shift-left = 'move left'
+    alt-shift-right = 'move right'
+    alt-shift-up = 'move up'
+    alt-shift-down = 'move down'
+    alt-minus = 'resize smart -50'
+    alt-equal = 'resize smart +50'
+    alt-slash = 'layout tiles horizontal vertical'
+    alt-comma = 'layout accordion horizontal vertical'
     alt-tab = 'workspace-back-and-forth'
-    # See: https://nikitabobko.github.io/AeroSpace/commands#move-workspace-to-monitor
     alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
-
-    # See: https://nikitabobko.github.io/AeroSpace/commands#mode
     alt-shift-semicolon = 'mode service'
 
 # 'service' binding mode declaration.
