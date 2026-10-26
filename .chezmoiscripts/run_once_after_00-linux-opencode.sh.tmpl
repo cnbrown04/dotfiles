@@ -1,0 +1,9 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/bin/sh
+# Linux: install OpenCode 2 with its official installer (macOS gets it from the Brewfile).
+# --no-modify-path because .zshrc already adds ~/.opencode/bin; update later with `opencode upgrade`.
+if command -v opencode >/dev/null 2>&1 || [ -x "$HOME/.opencode/bin/opencode" ]; then
+    exit 0
+fi
+curl -fsSL https://opencode.ai/v2/install | bash -s -- --no-modify-path
+{{ end -}}
