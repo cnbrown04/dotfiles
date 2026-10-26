@@ -1,0 +1,10 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+# Dock: auto-hide, show instantly on hover and slide in fast. Reruns when this changes.
+set -e
+D=com.apple.dock
+defaults write "$D" autohide -bool true
+defaults write "$D" autohide-delay -float 0
+defaults write "$D" autohide-time-modifier -float 0.15
+killall Dock
+{{ end -}}
