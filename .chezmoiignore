@@ -9,6 +9,11 @@ README.md
 
 {{- $hyprland := or (lookPath "Hyprland") (lookPath "hyprland") }}
 
+{{- if ne .chezmoi.os "darwin" }}
+# macOS only
+.aerospace.toml
+{{- end }}
+
 {{- if ne .chezmoi.os "linux" }}
 # Linux only
 .config/mimeapps.list
