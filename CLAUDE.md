@@ -22,3 +22,7 @@ Where the Mac side lives:
 
 No macOS equivalent (skip): Alt+P pseudotile, Alt+M wayvnc, mouse drag/resize binds, Print
 screenshots, media keys.
+
+Intentional difference (the only one): focus-follows-mouse is off in AeroSpace even though
+Hyprland has `follow_mouse = 1`. AeroSpace focuses the window behind unmanaged popups (browser
+extension popups like 1Password), which closes them on hover. Don't re-enable it.
