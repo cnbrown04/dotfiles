@@ -213,12 +213,13 @@ hl.config({
 
 -- ALT is "Opt", and it's the window-manager key. Cmd is keyd's app-shortcut layer: Cmd+<key> becomes
 -- the Linux Ctrl shortcut (copy, paste, save, new tab, ...), so it never reaches these binds.
--- Only Cmd+Shift+V (clipboard history) comes through, as SUPER+SHIFT+V.
+-- Only Cmd+Space (launcher) and Cmd+Shift+V (clipboard history) come through, as SUPER+SPACE and
+-- SUPER+SHIFT+V (keyd maps them in /etc/keyd/macos-layers).
 local mainMod = "ALT"
 
 -- Apps (everything else launches from vicinae)
 hl.bind(mainMod .. " + T",         hl.dsp.exec_cmd(terminal))
-hl.bind(mainMod .. " + SPACE",     hl.dsp.exec_cmd(menu))          -- launcher
+hl.bind("SUPER + SPACE",           hl.dsp.exec_cmd(menu))          -- Cmd+Space (keyd), like Spotlight
 hl.bind("SUPER + SHIFT + V",       hl.dsp.exec_cmd(clipboard))     -- Cmd+Shift+V (keyd)
 
 -- Windows / session (macOS-style)

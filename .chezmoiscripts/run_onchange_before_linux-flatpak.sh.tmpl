@@ -1,0 +1,19 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/bin/sh
+# Linux: install Flatpak + Flathub (and desktop apps on Hyprland machines). Reruns when this changes.
+if ! command -v flatpak >/dev/null 2>&1; then
+    if command -v apt-get >/dev/null 2>&1; then sudo apt-get install -y flatpak
+    elif command -v dnf >/dev/null 2>&1; then sudo dnf install -y flatpak
+    elif command -v pacman >/dev/null 2>&1; then sudo pacman -S --needed --noconfirm flatpak
+    else echo "chezmoi: don't know how to install flatpak here, skipping" >&2; exit 0
+    fi || { echo "chezmoi: flatpak install failed, skipping" >&2; exit 0; }
+fi
+flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+{{- if or (lookPath "Hyprland") (lookPath "hyprland") }}
+for app in io.github.kolunmi.Bazaar; do
+    flatpak info "$app" >/dev/null 2>&1 || flatpak install --user --noninteractive flathub "$app"
+done
+{{- end }}
+# /etc/profile.d/flatpak.sh adds the export dirs to XDG_DATA_DIRS from the next login on
+exit 0
+{{ end -}}

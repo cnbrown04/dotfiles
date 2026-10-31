@@ -3,7 +3,7 @@
 # chezmoi may run from a shell that has not picked up these yet (fresh machine)
 PATH="$HOME/.local/bin:$HOME/.opencode/bin:$PATH"
 missing=""
-for cmd in zsh git nvim tmux starship zoxide mise fzf lazygit opencode{{ if or (lookPath "Hyprland") (lookPath "hyprland") }} hyprpaper hypridle hyprlock qs vicinae cliphist wl-copy grim slurp satty udiskie moniqued{{ end }}; do
+for cmd in zsh git nvim tmux starship zoxide mise fzf lazygit opencode{{ if eq .chezmoi.os "linux" }} flatpak{{ end }}{{ if or (lookPath "Hyprland") (lookPath "hyprland") }} hyprpaper hypridle hyprlock qs vicinae cliphist wl-copy grim slurp satty udiskie moniqued{{ end }}; do
     command -v "$cmd" >/dev/null 2>&1 || missing="$missing $cmd"
 done
 [ -n "$missing" ] && echo "chezmoi: not installed yet:$missing" >&2
