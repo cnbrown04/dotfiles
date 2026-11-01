@@ -19,7 +19,7 @@ Scope {
     property int undescribed: 0
 
     // Preferred group order; groups not listed here follow in the order they appear in hyprland.lua
-    readonly property var order: ["Apps", "Windows", "Focus", "Workspaces", "Screenshots", "Media", "Session", "Shell"]
+    readonly property var order: ["Apps", "Windows", "Resize", "Focus", "Workspaces", "Screenshots", "Media", "Session", "Shell"]
 
     IpcHandler {
         target: "cheatsheet"

@@ -21,7 +21,9 @@ Where the Mac side lives:
   itself (its settings can't be dotfiled)
 
 No macOS equivalent (skip): Alt+P pseudotile, Alt+M wayvnc, mouse drag/resize binds, Print
-screenshots, media keys.
+screenshots, media keys, Alt+/ keybinds cheat sheet (Quickshell), dragging window edges to resize
+(`resize_on_border`), and dwindle's `split_width_multiplier` (AeroSpace has no aspect-based split
+rule; build big-left + stacked-right with Alt+Shift+arrows / join-with). Alt+/ stays unbound in AeroSpace.
 
 Intentional difference (the only one): focus-follows-mouse is off in AeroSpace even though
 Hyprland has `follow_mouse = 1`. AeroSpace focuses the window behind unmanaged popups (browser

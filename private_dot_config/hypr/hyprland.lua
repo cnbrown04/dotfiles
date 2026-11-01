@@ -97,7 +97,11 @@ hl.config({
             inactive_border = "rgba(3a3a3aaa)",
         },
 
-        resize_on_border = false,
+        -- Drag any window edge/corner to resize, like macOS (the grab area reaches 15 px outside the window,
+        -- since there's no border to grab)
+        resize_on_border        = true,
+        extend_border_grab_area = 15,
+        hover_icon_on_border    = true,
         allow_tearing    = false,
 
         layout = "dwindle",
@@ -159,6 +163,9 @@ hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "
 hl.config({
     dwindle = {
         preserve_split = true,
+        -- A pane splits side by side only if it's 1.5x wider than tall, otherwise top/bottom. Full monitors
+        -- still split left/right, but splitting a half again stacks: 3 windows = one big left + two stacked right.
+        split_width_multiplier = 1.5,
     },
     master = {
         new_status = "master",
@@ -241,6 +248,28 @@ hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }), { descript
 hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }), { description = "Focus: Move focus" })
 hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }), { description = "Focus: Move focus" })
 
+-- Move the focused window within the layout with Opt + Shift + arrows (it swaps/re-splits with its neighbour,
+-- so any arrangement can be built; Opt + J flips a split between side by side and stacked)
+hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.window.move({ direction = "left" }),  { description = "Windows: Move window in layout" })
+hl.bind(mainMod .. " + SHIFT + right", hl.dsp.window.move({ direction = "right" }), { description = "Windows: Move window in layout" })
+hl.bind(mainMod .. " + SHIFT + up",    hl.dsp.window.move({ direction = "up" }),    { description = "Windows: Move window in layout" })
+hl.bind(mainMod .. " + SHIFT + down",  hl.dsp.window.move({ direction = "down" }),  { description = "Windows: Move window in layout" })
+
+-- Resize the focused window from the keyboard (held keys repeat): Opt + Ctrl + arrows, or vim keys with
+-- Opt + Shift + H/J/K/L. Right/L = wider, left/H = narrower, down/J = taller, up/K = shorter.
+local resizeStep = 60
+for _, k in ipairs({
+    { "CTRL + right", "SHIFT + L", resizeStep, 0, "Resize: Wider" },
+    { "CTRL + left",  "SHIFT + H", -resizeStep, 0, "Resize: Narrower" },
+    { "CTRL + down",  "SHIFT + J", 0, resizeStep, "Resize: Taller" },
+    { "CTRL + up",    "SHIFT + K", 0, -resizeStep, "Resize: Shorter" },
+}) do
+    for _, keys in ipairs({ k[1], k[2] }) do
+        hl.bind(mainMod .. " + " .. keys, hl.dsp.window.resize({ x = k[3], y = k[4], relative = true }),
+            { repeating = true, description = k[5] })
+    end
+end
+
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
 for i = 1, 10 do
@@ -259,7 +288,7 @@ hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }), { descr
 
 -- Move/resize windows with mainMod + LMB/RMB and dragging
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true, description = "Windows: Move window" })
-hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true, description = "Windows: Resize window" })
+hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true, description = "Resize: Drag to resize" })
 
 -- Screenshots (~/.local/bin/screenshot): saved to ~/Pictures/Screenshots and copied; click the notification to annotate in Satty
 hl.bind("Print",          hl.dsp.exec_cmd("screenshot region"), { description = "Screenshots: Region or window" })   -- drag a region, or click a window

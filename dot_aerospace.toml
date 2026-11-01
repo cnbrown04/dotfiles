@@ -136,6 +136,23 @@ gaps.outer.right =      10
     alt-up = 'focus up'
     alt-down = 'focus down'
 
+    # Move the focused window within the layout with Alt + Shift + arrows
+    alt-shift-left = 'move left'
+    alt-shift-right = 'move right'
+    alt-shift-up = 'move up'
+    alt-shift-down = 'move down'
+
+    # Resize the focused window by 60 px: Alt + Ctrl + arrows, or vim keys
+    # with Alt + Shift + H/J/K/L. Right/L = wider, left/H = narrower, down/J = taller, up/K = shorter.
+    alt-ctrl-right = 'resize width +60'
+    alt-ctrl-left = 'resize width -60'
+    alt-ctrl-down = 'resize height +60'
+    alt-ctrl-up = 'resize height -60'
+    alt-shift-l = 'resize width +60'
+    alt-shift-h = 'resize width -60'
+    alt-shift-j = 'resize height +60'
+    alt-shift-k = 'resize height -60'
+
     # Workspaces: Alt+[0-9] switch, Alt+Shift+[0-9] move the window there and follow it.
     # 1-3 are pinned to monitors; the rest follow Hyprland rules (see aerospace-workspace)
     alt-1 = 'workspace 1'
@@ -164,13 +181,8 @@ gaps.outer.right =      10
     alt-shift-s = 'exec-and-forget ~/.local/bin/aerospace-workspace special-move'
 
     # AeroSpace-only extras (no Hyprland bind on these keys)
-    alt-shift-left = 'move left'
-    alt-shift-right = 'move right'
-    alt-shift-up = 'move up'
-    alt-shift-down = 'move down'
     alt-minus = 'resize smart -50'
     alt-equal = 'resize smart +50'
-    alt-slash = 'layout tiles horizontal vertical'
     alt-comma = 'layout accordion horizontal vertical'
     alt-tab = 'workspace-back-and-forth'
     alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
