@@ -124,8 +124,7 @@ gaps.outer.right =      10
 
     # Windows / session
     alt-q = 'close'
-    alt-l = '''exec-and-forget /usr/bin/python3 -Ic 'import ctypes; ctypes.CDLL("/System/Library/PrivateFrameworks/login.framework/Versions/Current/login").SACLockScreenImmediate()' '''
-    alt-ctrl-q = '''exec-and-forget /usr/bin/python3 -Ic 'import ctypes; ctypes.CDLL("/System/Library/PrivateFrameworks/login.framework/Versions/Current/login").SACLockScreenImmediate()' '''
+    # Lock screen is Cmd+Ctrl+Q, which macOS does natively (Hyprland binds the same keys via keyd)
     alt-shift-q = '''exec-and-forget osascript -e 'tell application "System Events" to log out' '''
     alt-shift-space = 'layout floating tiling'
     alt-j = 'layout horizontal vertical'  # togglesplit

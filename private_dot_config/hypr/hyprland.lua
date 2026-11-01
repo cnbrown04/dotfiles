@@ -231,8 +231,7 @@ hl.bind("SUPER + SHIFT + V",       hl.dsp.exec_cmd(clipboard), { description = "
 
 -- Windows / session (macOS-style)
 hl.bind(mainMod .. " + Q",                hl.dsp.window.close(), { description = "Windows: Close window" })
-hl.bind(mainMod .. " + CTRL + Q",         hl.dsp.exec_cmd("loginctl lock-session"), { description = "Session: Lock screen" })
-hl.bind(mainMod .. " + L",                hl.dsp.exec_cmd("loginctl lock-session"), { description = "Session: Lock screen" })
+hl.bind("SUPER + CTRL + Q",                hl.dsp.exec_cmd("loginctl lock-session"), { description = "Session: Lock screen" })  -- Cmd+Ctrl+Q (keyd), like macOS
 hl.bind(mainMod .. " + SHIFT + Q",        hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"), { description = "Session: Log out" })
 hl.bind(mainMod .. " + SHIFT + SPACE",    hl.dsp.window.float({ action = "toggle" }), { description = "Windows: Toggle floating" })
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo(), { description = "Windows: Pseudotile" })
