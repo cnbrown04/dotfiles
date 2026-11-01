@@ -1,0 +1,42 @@
+#!/bin/sh
+# Every Ghostty window lands in tmux (Ghostty's `command`, see ~/.config/ghostty/config).
+#   tmux-start          first window: attach to (or create) "main". If "main" is already open in
+#                       another window, ask: pick a session/project (sesh), or Esc / "New session".
+#   tmux-start --popup  the same picker inside tmux (prefix + K), switches the current client.
+PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:/opt/homebrew/bin:/usr/local/bin:$PATH"
+export PATH
+
+command -v tmux >/dev/null 2>&1 || exec "${SHELL:-/bin/sh}" -l
+
+new="  New session"
+
+pick() {  # pick <startup|popup> <session to hide> <what Esc does>
+    { [ "$1" = startup ] && echo "$new"
+      # running sessions first, then sesh config entries and zoxide dirs; lines are "<icon> <name>"
+      sesh list -t -c -z -i 2>/dev/null \
+        | awk -v hide="$2" '{ n = $0; gsub(/\033\[[0-9;]*m/, "", n); sub(/^[^ ]* /, "", n); if (n != hide) print }'
+    } | fzf --ansi --no-sort --reverse --border=none --info=inline-right \
+            --prompt="session > " --header="Enter: open  ·  Esc: $3"
+}
+
+if [ "$1" = --popup ]; then
+    choice=$(pick popup "$(tmux display -p '#S')" cancel) || exit 0
+    [ -n "$choice" ] && exec sesh connect "${choice#* }"   # drop the icon
+    exit 0
+fi
+
+[ -n "$TMUX" ] && exec "${SHELL:-/bin/sh}" -l
+
+# First window (or main exists but nobody is looking at it): main.
+main=$(tmux list-sessions -F '#{session_name} #{session_attached}' 2>/dev/null | awk '$1 == "main" { print $2 }')
+if [ -z "$main" ] || [ "$main" = 0 ]; then
+    exec tmux new-session -A -s main
+fi
+
+if command -v sesh >/dev/null 2>&1 && command -v fzf >/dev/null 2>&1; then
+    choice=$(pick startup main "new session")
+    if [ -n "$choice" ] && [ "$choice" != "$new" ]; then
+        exec sesh connect "${choice#* }"   # drop the icon
+    fi
+fi
+exec tmux new-session

@@ -23,6 +23,8 @@ window-padding-y = 8
 window-decoration = none
 {{- end }}
 confirm-close-surface = false
+# Every window opens in tmux: the first attaches to "main", later ones ask (sesh picker). ~/.local/bin/tmux-start
+command = {{ .chezmoi.homeDir }}/.local/bin/tmux-start
 
 # Cmd+V fallback (Shift+Insert) pastes the clipboard, not the primary selection
 keybind = shift+insert=paste_from_clipboard
