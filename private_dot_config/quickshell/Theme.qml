@@ -45,6 +45,7 @@ Singleton {
     readonly property int moduleRadius: 14
     readonly property int rowRadius: 10                // hover rows in lists
     readonly property int cardRadius: 12               // workspace overview cards
+    readonly property int windowRadius: 6              // = Hyprland decoration.rounding (dialogs that sit like windows)
 
     // Popover contents (Control Center, calendar, workspace overview). White overlays on the dark panel.
     readonly property color accent: "#ffffff"          // "on" state: toggles, today, active workspace, slider fill
