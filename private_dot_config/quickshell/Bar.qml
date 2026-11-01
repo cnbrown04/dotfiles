@@ -213,15 +213,6 @@ Scope {
                     }
                 }
 
-                // Do Not Disturb indicator
-                Glyph {
-                    anchors.verticalCenter: parent?.verticalCenter
-                    visible: ShellState.doNotDisturb
-                    code: 0xF0594  // moon
-                    size: 15
-                    color: Theme.panelFg
-                }
-
                 // AirDrop indicator (receiver on)
                 Glyph {
                     anchors.verticalCenter: parent?.verticalCenter

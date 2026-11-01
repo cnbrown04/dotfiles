@@ -67,7 +67,8 @@ hl.on("hyprland.start", function ()
     if host.wayvnc_output then
         hl.exec_cmd("wayvnc --output=" .. host.wayvnc_output)     -- VNC for Termix, ~/.config/wayvnc/config sets the address
     end
-    hl.exec_cmd("dock-icons --quiet; qs")                         -- dock icon tiles for new apps, then quickshell (bar, notifications, dock)
+    hl.exec_cmd("dock-icons --quiet; qs")                         -- dock icon tiles for new apps, then quickshell (bar, dock, polkit)
+    hl.exec_cmd("systemctl --user start hokum.service")           -- notification daemon (graphical-session.target isn't used here)
     hl.exec_cmd("vicinae server")                                 -- launcher daemon
     hl.exec_cmd("udiskie")                                        -- automount USB drives
     hl.exec_cmd("moniqued")                                       -- monique hotplug profile daemon
@@ -358,15 +359,6 @@ hl.layer_rule({
 
     blur         = true,
     ignore_alpha = 0.05,  -- blur the 10% glass, not the fully transparent space around it
-})
-
--- Blur behind notification banners
-hl.layer_rule({
-    name  = "notifications-blur",
-    match = { namespace = "^quickshell-notifications$" },
-
-    blur         = true,
-    ignore_alpha = 0.05,
 })
 
 -- Blur behind the Quickshell popovers (Control Center, calendar, workspace overview); they animate

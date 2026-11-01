@@ -30,6 +30,7 @@ CLAUDE.md
 .config/quickshell
 .config/vicinae
 .config/satty
+.config/hokum
 .config/monique
 .config/airdrop
 .local/bin/airdropd
@@ -45,6 +46,9 @@ CLAUDE.md
 {{- /* user services only where their program is built */}}
 {{- if not (stat (joinPath .chezmoi.homeDir ".local/bin/iris")) }}
 .config/systemd/user/iris.service
+{{- end }}
+{{- if not (stat "/usr/share/vulkan/icd.d/nvidia_icd.json") }}
+.config/systemd/user/hokum.service.d
 {{- end }}
 {{- if not (stat (joinPath .chezmoi.homeDir "Developer/1Key-Reflash/app/target/debug/onekey")) }}
 .config/systemd/user/onekey.service

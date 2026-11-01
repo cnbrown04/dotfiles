@@ -2,11 +2,10 @@ pragma Singleton
 import Quickshell
 import QtQuick
 
-// Shell-wide toggles shared between the Control Center, bar and notifications.
+// Shell-wide toggles shared between the Control Center and bar.
 Singleton {
     id: state
 
-    property bool doNotDisturb: false   // hide non-critical notification banners
     property bool keepAwake: false      // idle inhibitor: no lock / screen-off while on
 
     // Quickshell 0.3.1 silently drops volume writes to device-routed nodes that report no

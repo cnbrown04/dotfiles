@@ -16,7 +16,7 @@ ZSH is the GOAT, don't diss it ([Zap](https://github.com/zap-zsh/zap) + [starshi
 
 The Hyprland desktop stuff (hypr, Quickshell, Vicinae, satty, monique, the scripts in `~/.local/bin`) only shows up on machines that actually have Hyprland installed. See `.chezmoiignore`.
 
-On Linux it also installs [Flatpak](https://flatpak.org/) with Flathub, plus [Bazaar](https://github.com/kolunmi/bazaar) if it's a Hyprland machine.
+On Linux it also installs [Flatpak](https://flatpak.org/) with Flathub, plus [Bazaar](https://github.com/kolunmi/bazaar) and [Hokum](https://hokum.app) (notifications) if it's a Hyprland machine.
 
 On a Mac, the first apply runs `brew bundle` for the same tools (if [Homebrew](https://brew.sh/) is installed) and symlinks the [1Password](https://1password.com/) SSH agent socket to `~/.1password/agent.sock`, so the same ssh config works on both.
 

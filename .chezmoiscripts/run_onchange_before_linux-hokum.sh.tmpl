@@ -1,0 +1,25 @@
+{{ if and (eq .chezmoi.os "linux") (or (lookPath "Hyprland") (lookPath "hyprland")) -}}
+#!/bin/sh
+# Hyprland machines: install Hokum (https://hokum.app), the notification daemon, from its latest
+# GitHub release. Quickshell no longer serves notifications. Later updates: Hokum offers them itself.
+command -v hokum >/dev/null 2>&1 && exit 0
+case "$(uname -m)" in
+    x86_64) arch=x64 ;; aarch64) arch=arm64 ;;
+    *) echo "chezmoi: no Hokum build for $(uname -m), skipping" >&2; exit 0 ;;
+esac
+if command -v apt-get >/dev/null 2>&1; then fmt=deb
+elif command -v dnf >/dev/null 2>&1; then fmt=rpm
+elif command -v paru >/dev/null 2>&1; then paru -S --needed --noconfirm hokum-bin; exit 0
+else echo "chezmoi: don't know how to install Hokum here, skipping" >&2; exit 0
+fi
+url=$(curl -fsSL https://api.github.com/repos/anomalyco/hokum/releases/latest \
+    | grep -o "https://[^\"]*-linux-$arch\.$fmt" | head -n 1)
+[ -n "$url" ] || { echo "chezmoi: couldn't find a Hokum release, skipping" >&2; exit 0; }
+tmp=$(mktemp -d)
+curl -fsSL -o "$tmp/hokum.$fmt" "$url" || { rm -rf "$tmp"; echo "chezmoi: Hokum download failed" >&2; exit 0; }
+if [ "$fmt" = deb ]; then sudo apt-get install -y "$tmp/hokum.$fmt"
+else sudo dnf install -y "$tmp/hokum.$fmt"
+fi || echo "chezmoi: Hokum install failed, skipping" >&2
+rm -rf "$tmp"
+exit 0
+{{ end -}}

@@ -4,7 +4,7 @@
 //     (Wi-Fi: join networks, asks for a password if needed; Bluetooth: connect paired devices)
 //   - AirDrop (AirDrop.qml): circle starts/stops the receiver, the row opens a page with Send File…
 //   - AirPods (AirPods.qml, shown while connected): batteries, listening mode, Conversation Awareness
-//   - Do Not Disturb (hides non-critical banners), Keep Awake (Wayland idle inhibitor -> hypridle waits)
+//   - Keep Awake (Wayland idle inhibitor -> hypridle waits)
 //   - Sound + microphone sliders (click the icon to mute), Now Playing (MPRIS), power buttons
 //     (Log Out / Restart / Shut Down need a second click)
 // Panel: Popover.qml (same look as the notification banners, blurred by the popover-blur layer rule).
@@ -187,7 +187,7 @@ Scope {
         }
     }
 
-    // Square-ish tile with a toggle circle and a label (Do Not Disturb, Keep Awake)
+    // Square-ish tile with a toggle circle and a label (Keep Awake)
     component Tile: CcModule {
         id: tile
 
@@ -481,14 +481,6 @@ Scope {
                         Layout.fillHeight: true
                         spacing: 10
 
-                        Tile {
-                            shown: cc.open
-                            delay: 40
-                            code: 0xF0594  // moon
-                            label: "Do Not Disturb"
-                            checked: ShellState.doNotDisturb
-                            onToggled: ShellState.doNotDisturb = !ShellState.doNotDisturb
-                        }
                         Tile {
                             shown: cc.open
                             delay: 70
