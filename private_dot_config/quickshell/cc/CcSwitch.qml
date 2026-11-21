@@ -1,5 +1,6 @@
 // Pill switch for the detail pages' headers. The knob slides with a little overshoot.
 import QtQuick
+import qs
 
 Rectangle {
     id: sw

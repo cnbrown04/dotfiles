@@ -64,6 +64,7 @@ hl.on("hyprland.start", function ()
 
     hl.exec_cmd("hyprpaper")                                      -- wallpaper
     hl.exec_cmd("hypridle")                                       -- idle -> hyprlock
+    hl.exec_cmd("nightshift start")                               -- Night Shift: writes hyprsunset.conf, starts hyprsunset, ~/.local/bin
     if host.wayvnc_output then
         hl.exec_cmd("wayvnc --output=" .. host.wayvnc_output)     -- VNC for Termix, ~/.config/wayvnc/config sets the address
     end

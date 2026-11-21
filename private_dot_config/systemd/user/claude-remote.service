@@ -1,0 +1,20 @@
+[Unit]
+# Claude Code Remote Control server: drive Claude on this machine from
+# claude.ai/code or the Claude mobile app (keeps working while the screen is locked).
+# Runs in ~/Developer: Claude never saves trust for the home dir, so rc refuses to run there.
+# See ~/config.md section 1.26.
+# Logs: journalctl --user -u %n -f
+Description=Claude Code Remote Control server
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Developer
+ExecStart=%h/.local/bin/claude remote-control --name hephaestus
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=%t/bus
+Restart=on-failure
+RestartSec=15
+
+[Install]
+WantedBy=default.target

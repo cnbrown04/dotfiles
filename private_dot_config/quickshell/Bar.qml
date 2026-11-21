@@ -20,6 +20,9 @@ Scope {
     // List current ids with: busctl --user get-property org.kde.StatusNotifierWatcher
     //   /StatusNotifierWatcher org.kde.StatusNotifierWatcher RegisteredStatusNotifierItems
     readonly property var hiddenTrayIds: ["1Password"]
+    // Tray items whose left-click Activate does something useful; every other item opens its menu on left-click
+    // (LibrePods, Proton VPN and Electron apps ignore Activate)
+    readonly property var activateTrayIds: ["vicinae"]
 
     // Keep the default sink bound so its volume/mute properties are live.
     PwObjectTracker {
@@ -40,6 +43,13 @@ Scope {
     IpcHandler {
         target: "controlcenter"
         function toggle(): void { root.focusedBar()?.controlCenter.toggle(); }
+        // Open it on a page: qs ipc call controlcenter showPage Tailscale  (a file in cc/pages/)
+        function showPage(page: string): void {
+            const cc = root.focusedBar()?.controlCenter;
+            if (!cc) return;
+            cc.open = true;
+            cc.push(page);
+        }
     }
     IpcHandler {
         target: "calendar"
@@ -148,6 +158,8 @@ Scope {
                 }
             }
 
+            TrayMenu { id: trayMenu; bar: bar }
+
             ControlCenter {
                 id: controlCenter
                 bar: bar
@@ -192,21 +204,76 @@ Scope {
                         implicitSize: 16
                         source: modelData.icon
 
+                        // App name for the hover label: Title, else the tooltip title, else the id
+                        readonly property string appName: modelData.title || modelData.tooltipTitle || modelData.id || ""
+
+                        function showMenu() { trayMenu.toggle(trayIcon.modelData, trayIcon); }
+
                         MouseArea {
+                            id: trayMouse
                             anchors.fill: parent
                             anchors.margins: -4
+                            hoverEnabled: true
                             acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
                             onClicked: mouse => {
                                 const item = trayIcon.modelData;
-                                if (mouse.button === Qt.MiddleButton) {
-                                    item.secondaryActivate();
-                                } else if (mouse.button === Qt.RightButton) {
-                                    if (item.hasMenu) {
-                                        const p = trayIcon.mapToItem(null, 0, trayIcon.height);
-                                        item.display(bar, p.x, p.y + 10);
-                                    }
-                                } else {
-                                    item.activate();
+                                hoverDelay.stop();
+                                const wantsMenu = item.hasMenu && (mouse.button === Qt.RightButton
+                                    || (mouse.button === Qt.LeftButton && !root.activateTrayIds.includes(item.id)));
+                                // Opening a menu: the label stays until the menu is laid out, then the two
+                                // crossfade (see tipWanted). Anything else: drop the label now.
+                                if (!wantsMenu) trayIcon.tipShown = false;
+                                if (wantsMenu) trayIcon.showMenu();
+                                else if (mouse.button === Qt.MiddleButton) item.secondaryActivate();
+                                else if (mouse.button === Qt.LeftButton) item.activate();
+                            }
+                            onContainsMouseChanged: {
+                                trayIcon.tipShown = false;
+                                // No labels while a tray menu is open (macOS behaviour)
+                                if (containsMouse && !trayMenu.open) hoverDelay.restart(); else hoverDelay.stop();
+                            }
+                        }
+
+                        // Short delay so sweeping across the tray doesn't flash labels
+                        property bool tipShown: false
+                        readonly property bool tipWanted: tipShown && appName !== "" && !trayMenu.ready
+                        // Once a menu has taken over, keep the label away until the pointer leaves and comes back
+                        Connections {
+                            target: trayMenu
+                            function onReadyChanged() { if (trayMenu.ready) trayIcon.tipShown = false; }
+                        }
+                        Timer { id: hoverDelay; interval: 350; onTriggered: trayIcon.tipShown = true }
+
+                        // Name label under the hovered icon, same look as the dock's (.dash-label)
+                        PopupWindow {
+                            visible: trayIcon.tipWanted || tip.opacity > 0
+                            anchor.item: trayIcon
+                            anchor.edges: Edges.Bottom
+                            anchor.gravity: Edges.Bottom
+                            anchor.rect.x: trayIcon.width / 2
+                            anchor.rect.y: 14
+                            implicitWidth: tip.width
+                            implicitHeight: tip.height
+                            color: "transparent"
+
+                            Rectangle {
+                                id: tip
+                                width: tipText.implicitWidth + 24
+                                height: tipText.implicitHeight + 12
+                                radius: Theme.buttonRadius
+                                color: Theme.tooltipBg
+                                opacity: trayIcon.tipWanted ? 1 : 0
+                                Behavior on opacity { NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
+
+                                Text {
+                                    id: tipText
+                                    anchors.centerIn: parent
+                                    horizontalAlignment: Text.AlignHCenter
+                                    text: trayIcon.appName
+                                        + (trayIcon.modelData.tooltipDescription ? "\n" + trayIcon.modelData.tooltipDescription : "")
+                                    color: Theme.tooltipFg
+                                    font.family: Theme.font
+                                    font.pixelSize: Theme.fontSize
                                 }
                             }
                         }

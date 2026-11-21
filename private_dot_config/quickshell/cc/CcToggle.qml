@@ -1,6 +1,7 @@
 // Round toggle button (macOS Control Center): white with a dark glyph when on, translucent when off.
-// Squishes on press and springs back.
+// Squishes on press and springs back; pulses while `busy`.
 import QtQuick
+import qs
 
 Rectangle {
     id: toggle
@@ -9,6 +10,7 @@ Rectangle {
     property int code
     property int size: 32
     property bool interactive: true
+    property bool busy: false        // pulses while something is connecting/starting
     signal clicked()
 
     implicitWidth: size
@@ -26,6 +28,14 @@ Rectangle {
         size: Math.round(toggle.size * 0.56)
         color: toggle.checked ? Theme.accentFg : Theme.accent
         Behavior on color { ColorAnimation { duration: 220 } }
+    }
+
+    SequentialAnimation on opacity {
+        running: toggle.busy
+        loops: Animation.Infinite
+        onStopped: toggle.opacity = 1
+        NumberAnimation { to: 0.4; duration: 550; easing.type: Easing.InOutSine }
+        NumberAnimation { to: 1; duration: 550; easing.type: Easing.InOutSine }
     }
 
     MouseArea {

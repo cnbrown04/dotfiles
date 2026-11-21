@@ -10,6 +10,13 @@ Item {
     property bool enabledLook: true
     signal clicked()
 
+    // Keyboard navigation in the Control Center (ControlCenter.qml): Enter/Space click it
+    property bool navigable: true
+    readonly property bool ccNav: navigable && enabledLook
+    readonly property int navRadius: width / 2 + 2
+    function navActivate() { clicked(); }
+    function navToggle() { clicked(); }
+
     implicitWidth: size
     implicitHeight: size
     opacity: enabledLook ? 1 : 0.35

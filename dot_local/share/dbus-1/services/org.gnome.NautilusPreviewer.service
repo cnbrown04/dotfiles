@@ -1,0 +1,6 @@
+# Override of /usr/share/dbus-1/services/org.gnome.NautilusPreviewer.service.
+# GStreamer's gtkglsink defaults to the legacy GL API, which can't share a context with GTK3's core-profile
+# EGL context on NVIDIA (EGL_BAD_CONTEXT -> "Failed to initialize OpenGL with Gtk", no video preview).
+[D-BUS Service]
+Name=org.gnome.NautilusPreviewer
+Exec=/usr/bin/env GST_GL_API=opengl3 /usr/libexec/org.gnome.NautilusPreviewer

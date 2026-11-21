@@ -1,17 +1,26 @@
 // macOS Control Center slider: white fill with the icon riding inside it, thickens while hovered or dragged.
 // Click the icon to mute; drag/click the track or scroll to set the value.
 import QtQuick
+import qs
 
 Item {
     id: slider
 
     property real value: 0          // 0..1
     property bool muted: false
+    property string label: ""       // shown while hovered instead of the percentage (e.g. "4000K")
     property int code
     signal moved(real value)
     signal iconClicked()
 
-    readonly property bool engaged: mouse.containsMouse || mouse.pressed
+    readonly property bool engaged: mouse.containsMouse || mouse.pressed || CcUtil.navItem === slider
+
+    // Keyboard navigation (ControlCenter.qml): h/l or arrows adjust (navAdjust), Enter/Space mute
+    readonly property bool ccNav: true
+    readonly property int navRadius: height / 2 + 2
+    function navActivate() { iconClicked(); }
+    function navToggle() { iconClicked(); }
+    function navAdjust(step) { moved(Math.max(0, Math.min(1, value + step * 0.05))); }
     readonly property real shown: muted ? 0 : Math.max(0, Math.min(1, value))
 
     implicitHeight: 28
@@ -60,7 +69,7 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: 10
             anchors.verticalCenter: parent.verticalCenter
-            text: slider.muted ? "Muted" : Math.round(slider.value * 100) + "%"
+            text: slider.label !== "" ? slider.label : slider.muted ? "Muted" : Math.round(slider.value * 100) + "%"
             color: fill.width > track.width - 44 ? Theme.accentFg : Theme.altFg
             font.family: Theme.font
             font.pixelSize: Theme.fontCaption

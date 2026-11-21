@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=Brave (Claude)
+GenericName=Web Browser
+Comment=Separate Brave profile Claude can control
+Exec=brave-claude %U
+Icon=brave-browser
+Terminal=false
+Type=Application
+Categories=Network;WebBrowser;
+StartupWMClass=brave-claude

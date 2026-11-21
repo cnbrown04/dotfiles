@@ -23,7 +23,16 @@ require("config.theme").setup()
 require("config.barbecue").setup()
 
 -- fff.nvim
-vim.pack.add({ "https://github.com/dmtrKovalenko/fff.nvim" })
+-- Track stable releases (v* tags) only: main and the nightly tags often land on
+-- commits with no prebuilt binary yet. vim.version.range("*") can't be used here
+-- because it also matches the 0.x.y-nightly.* prerelease tags, so pick the newest
+-- v* tag ourselves (the daily auto-update fetches new tags; it moves on the next one).
+local function fff_latest_release()
+	local dir = vim.fn.stdpath("data") .. "/site/pack/core/opt/fff.nvim"
+	local out = vim.system({ "git", "-C", dir, "tag", "-l", "v*", "--sort=-v:refname" }, { text = true }):wait()
+	return out.code == 0 and out.stdout:match("^(%S+)") or "v0.11.0"
+end
+vim.pack.add({ { src = "https://github.com/dmtrKovalenko/fff.nvim", version = fff_latest_release() } })
 
 -- neo-tree
 vim.pack.add({

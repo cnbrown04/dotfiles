@@ -9,6 +9,5 @@ x-scheme-handler/itms=cider.desktop
 x-scheme-handler/itmss=cider.desktop
 x-scheme-handler/music=cider.desktop
 x-scheme-handler/itunes=cider.desktop
-x-scheme-handler/anytype=anytype.desktop
 
 [Added Associations]

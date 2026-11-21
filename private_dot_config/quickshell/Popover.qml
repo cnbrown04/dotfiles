@@ -18,6 +18,9 @@ PanelWindow {
     property int panelRadius: Theme.panelRadius
     // Called on Esc before closing; return true if it handled the key (e.g. went back a page)
     property var backAction: null
+    // Called with every other key press while open; return true if it handled it (keyboard navigation)
+    property var keyHandler: null
+    function focusPanel() { panel.forceActiveFocus(); }
     signal closeRequested()
 
     default property alias content: contentArea.data
@@ -66,6 +69,7 @@ PanelWindow {
         scale: 0.88
         transform: Translate { id: lift; y: -16 }
 
+        Keys.onPressed: e => { if (win.keyHandler && win.keyHandler(e)) e.accepted = true; }
         Keys.onEscapePressed: {
             if (!(win.backAction && win.backAction()))
                 win.closeRequested();

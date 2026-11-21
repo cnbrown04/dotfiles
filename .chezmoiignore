@@ -33,10 +33,13 @@ CLAUDE.md
 .config/hokum
 .config/monique
 .config/airdrop
+.local/share/dbus-1
 .local/bin/airdropd
 .local/bin/airdrop-pick-send
 .local/bin/airdrop-send
 .local/bin/dock-icons
+.local/bin/nightshift
+.local/share/vicinae/scripts
 .local/bin/keyboard-mode
 .local/bin/keyd-hypr-mapper
 .local/bin/screenshot

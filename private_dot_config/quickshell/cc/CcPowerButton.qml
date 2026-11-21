@@ -1,6 +1,7 @@
 // Round power-action button with a caption. With `confirm`, the first click arms it (white, rippling,
 // caption "Confirm") and a second click within 3 s runs it.
 import QtQuick
+import qs
 
 Item {
     id: pb
@@ -10,6 +11,21 @@ Item {
     property bool confirm: false
     property bool armed: false
     signal triggered()
+
+    // Keyboard navigation (ControlCenter.qml): Enter/Space click it (arms first when it needs confirming)
+    readonly property bool ccNav: true
+    readonly property int navRadius: 12
+    function navActivate() { press(); }
+    function navToggle() { press(); }
+    function press() {
+        if (!confirm || armed) {
+            armed = false;
+            triggered();
+        } else {
+            armed = true;
+            disarm.restart();
+        }
+    }
 
     implicitWidth: 64
     implicitHeight: column.implicitHeight
@@ -68,15 +84,7 @@ Item {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    if (!pb.confirm || pb.armed) {
-                        pb.armed = false;
-                        pb.triggered();
-                    } else {
-                        pb.armed = true;
-                        disarm.restart();
-                    }
-                }
+                onClicked: pb.press()
             }
         }
 

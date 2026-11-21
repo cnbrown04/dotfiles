@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Separate Brave profile that Claude can drive over CDP (Playwright connectOverCDP).
+# Chromium refuses remote debugging on the default profile, so this uses its own data dir.
+exec /usr/bin/brave-browser-stable \
+  --user-data-dir="${XDG_CONFIG_HOME:-$HOME/.config}/BraveSoftware/Brave-Claude" \
+  --remote-debugging-address=127.0.0.1 \
+  --remote-debugging-port="${BRAVE_CLAUDE_PORT:-9222}" \
+  --class=brave-claude \
+  --enable-features=AcceleratedVideoDecodeLinuxGL,VaapiVideoDecoder,VaapiIgnoreDriverChecks,VaapiOnNvidiaGPUs \
+  "$@"
