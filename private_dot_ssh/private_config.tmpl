@@ -4,11 +4,15 @@ Match host * exec "test -S %d/.1password/agent.sock"
 	IdentityAgent ~/.1password/agent.sock
 
 # The FIDO2 keys are the default keys for each host: the YubiKey 5C Nano and
-# the Token2 first, then the backup YubiKey. IdentitiesOnly stops the agent
-# from offering its other keys. A host that needs a key in 1Password gets its
-# own block above this one, with IdentityFile set to the .pub file of that key.
+# the Token2 first, then the backup YubiKey. hephaestus never has the Nano, so
+# its config has no line for it. IdentitiesOnly stops the agent from offering
+# its other keys. A host that needs a key in 1Password gets its own block above
+# this one, with IdentityFile set to the .pub file of that key.
 Host *
 	IdentitiesOnly yes
+{{- /* The YubiKey 5C Nano never goes in hephaestus. */}}
+{{- if ne .chezmoi.hostname "hephaestus" }}
 	IdentityFile ~/.ssh/id_ed25519_sk_nano
+{{- end }}
 	IdentityFile ~/.ssh/id_ed25519_sk_token2
 	IdentityFile ~/.ssh/id_ed25519_sk_backup
