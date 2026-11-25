@@ -8,5 +8,10 @@ systemctl --user daemon-reload || exit 0
 for unit in iris.service onekey.service; do
     [ -f "$HOME/.config/systemd/user/$unit" ] && systemctl --user enable "$unit"
 done
+# gpg-agent is the SSH agent (~/.gnupg). The units of OpenSSH and gcr are masked
+# (symlinks to /dev/null in ~/.config/systemd/user), so stop the copies that still run.
+systemctl --user stop ssh-agent.socket ssh-agent.service gcr-ssh-agent.socket gcr-ssh-agent.service 2>/dev/null
+systemctl --user enable --now gpg-agent.socket gpg-agent-ssh.socket 2>/dev/null
+systemctl --user set-environment SSH_AUTH_SOCK="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/gnupg/S.gpg-agent.ssh"
 exit 0
 {{ end -}}

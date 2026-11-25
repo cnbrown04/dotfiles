@@ -1,0 +1,26 @@
+#!/bin/sh
+# ssh-sk-restore: get the FIDO2 SSH key files back from the connected security key, with the
+# names that ~/.ssh/config uses (id_ed25519_sk_nano, _token2, _backup). Run it one time for
+# each key on a new machine. ssh-keygen -K asks for the FIDO2 PIN.
+set -eu
+command -v ssh-keygen >/dev/null 2>&1 || { echo "ssh-sk-restore: ssh-keygen is missing" >&2; exit 1; }
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+(cd "$tmp" && ssh-keygen -K)
+found=0
+for pub in "$tmp"/*.pub; do
+    [ -f "$pub" ] || continue
+    fp=$(ssh-keygen -lf "$pub" | awk '{print $2}')
+    case "$fp" in
+        SHA256:EVO7bYPKkIrvMZoxoTih9p3mNUCm9N4iaq9JXhFiE5A) name=nano ;;
+        SHA256:s001f5TXoq2fwO7uq5RTXwHu1BZjMD3ezTLvZYTstAY) name=token2 ;;
+        SHA256:xflDT3DgKAu2X3a9nxoCtbh0e+uuRJTNGiLD9aOh62g) name=backup ;;
+        *) echo "ssh-sk-restore: skipped an unknown key: $fp" >&2; continue ;;
+    esac
+    mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh"
+    install -m 600 "${pub%.pub}" "$HOME/.ssh/id_ed25519_sk_$name"
+    install -m 644 "$pub" "$HOME/.ssh/id_ed25519_sk_$name.pub"
+    echo "ssh-sk-restore: wrote ~/.ssh/id_ed25519_sk_$name"
+    found=1
+done
+[ "$found" = 1 ] || { echo "ssh-sk-restore: the key has no known SSH key" >&2; exit 1; }

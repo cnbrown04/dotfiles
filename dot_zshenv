@@ -7,7 +7,15 @@ export XDG_CONFIG_HOME="$HOME/.config"
 # gpg-agent is the SSH agent: it holds the PIV key that signs git commits.
 # macOS sets its own agent, so this replaces it. In an SSH session, the
 # forwarded agent stays. GPG_TTY lets pinentry ask in the terminal too.
-if [ -z "${SSH_CONNECTION:-}" ] && command -v gpgconf > /dev/null 2>&1; then
-  export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+# .zprofile adds Homebrew to PATH after this file, so also look there.
+for gpgconf in gpgconf /opt/homebrew/bin/gpgconf /usr/local/bin/gpgconf; do
+  command -v "$gpgconf" > /dev/null 2>&1 && break
+  gpgconf=""
+done
+if [ -n "$gpgconf" ] && [ -z "${SSH_CONNECTION:-}" ]; then
+  export SSH_AUTH_SOCK="$("$gpgconf" --list-dirs agent-ssh-socket)"
+  # macOS has no socket that starts gpg-agent, so start it here. Linux uses systemd.
+  [ "$(uname -s)" = Darwin ] && "$gpgconf" --launch gpg-agent > /dev/null 2>&1
 fi
+unset gpgconf
 [ -n "${TTY:-}" ] && export GPG_TTY="$TTY"

@@ -3,8 +3,11 @@
 # chezmoi may run from a shell that has not picked up these yet (fresh machine)
 PATH="$HOME/.local/bin:$HOME/.opencode/bin:$PATH"
 missing=""
-for cmd in zsh git nvim tmux sesh starship zoxide mise fzf lazygit opencode{{ if eq .chezmoi.os "linux" }} flatpak{{ end }}{{ if or (lookPath "Hyprland") (lookPath "hyprland") }} hyprpaper hypridle hyprlock qs vicinae cliphist wl-copy grim slurp satty udiskie moniqued{{ end }}; do
+for cmd in zsh git nvim tmux sesh starship zoxide mise fzf lazygit opencode gpg gpgconf keyroostctl{{ if eq .chezmoi.os "linux" }} flatpak{{ else }} pinentry-mac{{ end }}{{ if or (lookPath "Hyprland") (lookPath "hyprland") }} hyprpaper hypridle hyprlock qs vicinae cliphist wl-copy grim slurp satty udiskie moniqued{{ end }}; do
     command -v "$cmd" >/dev/null 2>&1 || missing="$missing $cmd"
 done
 [ -n "$missing" ] && echo "chezmoi: not installed yet:$missing" >&2
+# The FIDO2 SSH key files are not in this repo. ssh-sk-restore gets them from each key.
+ls "$HOME"/.ssh/id_ed25519_sk_* >/dev/null 2>&1 \
+    || echo "chezmoi: no FIDO2 SSH key files yet: connect each key and run ssh-sk-restore" >&2
 exit 0
