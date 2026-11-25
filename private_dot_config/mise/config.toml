@@ -1,4 +1,6 @@
 [tools]
+"cargo:keyroost" = { version = "0.16.0", os = ["linux"] }
+"cargo:keyroostctl" = { version = "0.16.0", os = ["linux"] }
 "github:joshmedeski/sesh" = "2.34.0"
 kubectl = "1.37.1"
 # Global mise config (tools, env and tasks for the desktop).
