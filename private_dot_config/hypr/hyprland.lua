@@ -161,6 +161,8 @@ hl.animation({ leaf = "workspaces",    enabled = true,  speed = 1.94, bezier = "
 hl.animation({ leaf = "workspacesIn",  enabled = true,  speed = 1.21, bezier = "almostLinear", style = "fade" })
 hl.animation({ leaf = "workspacesOut", enabled = true,  speed = 1.94, bezier = "almostLinear", style = "fade" })
 hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "quick" })
+-- Night Shift / hyprsunset color changes: Hyprland's default is a 0.5 s linear snap; ease over 2 s like macOS
+hl.animation({ leaf = "__internal_fadeCTM", enabled = true, speed = 20, bezier = "easeInOutCubic" })
 
 hl.config({
     dwindle = {
