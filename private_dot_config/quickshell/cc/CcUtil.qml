@@ -5,9 +5,12 @@ import Quickshell.Networking
 import Quickshell.Services.Mpris
 import Quickshell.Services.Pipewire
 import QtQuick
+import qs
 
 // Shared Control Center state and helpers, so rows, modules and pages don't each look things up.
 Singleton {
+    id: util
+
     // Audio
     readonly property var sink: Pipewire.defaultAudioSink
     readonly property var source: Pipewire.defaultAudioSource
@@ -17,6 +20,20 @@ Singleton {
     readonly property var wifiDevice: Networking.devices.values.find(d => d.type === DeviceType.Wifi) ?? null
     readonly property var wiredDevice: Networking.devices.values.find(d => d.type === DeviceType.Wired) ?? null
     readonly property var wifiNetwork: wifiDevice?.networks.values.find(n => n.connected) ?? null
+
+    // AirDrop's exclusive mode stops NetworkManager while it runs, so every device above goes away. These keep the
+    // Wi-Fi and Ethernet rows in place (Wi-Fi as "Used by AirDrop") instead of the row group collapsing.
+    readonly property bool netPaused: wifiDevice === null && AirDrop.on
+    property bool hadWired: false
+    property bool wiredLink: false
+    onWiredDeviceChanged: if (wiredDevice) hadWired = true
+    Binding {
+        when: util.wiredDevice !== null
+        target: util
+        property: "wiredLink"
+        value: util.wiredDevice?.hasLink ?? false
+        restoreMode: Binding.RestoreNone
+    }
 
     // Bluetooth
     readonly property var adapter: Bluetooth.defaultAdapter

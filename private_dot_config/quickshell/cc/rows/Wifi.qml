@@ -2,11 +2,14 @@ import Quickshell.Networking
 import qs.cc
 
 CcRow {
-    available: CcUtil.wifiDevice !== null
-    code: Networking.wifiEnabled ? (CcUtil.wifiNetwork ? CcUtil.wifiGlyph(CcUtil.wifiNetwork.signalStrength) : 0xF05A9) : 0xF05AA
+    readonly property bool paused: CcUtil.netPaused   // AirDrop has the card (NetworkManager is stopped)
+
+    available: CcUtil.wifiDevice !== null || paused
+    code: paused || !Networking.wifiEnabled ? 0xF05AA : CcUtil.wifiNetwork ? CcUtil.wifiGlyph(CcUtil.wifiNetwork.signalStrength) : 0xF05A9
     title: "Wi-Fi"
-    subtitle: !Networking.wifiEnabled ? "Off" : CcUtil.wifiNetwork?.name ?? "Not Connected"
-    checked: Networking.wifiEnabled
-    page: "Wifi"
+    subtitle: paused ? "Used by AirDrop" : !Networking.wifiEnabled ? "Off" : CcUtil.wifiNetwork?.name ?? "Not Connected"
+    checked: !paused && Networking.wifiEnabled
+    toggleable: !paused
+    page: paused ? "" : "Wifi"
     onToggled: Networking.wifiEnabled = !Networking.wifiEnabled
 }
