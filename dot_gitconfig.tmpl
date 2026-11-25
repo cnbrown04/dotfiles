@@ -9,9 +9,15 @@
 [user]
 	name = {{ .name }}
 	email = {{ .email }}
-{{- /* Sign each commit and tag with a FIDO2 key. hephaestus never has the
-       YubiKey 5C Nano, so it signs with the Token2. */}}
-	signingkey = ~/.ssh/{{ if eq .chezmoi.hostname "hephaestus" }}id_ed25519_sk_token2{{ else }}id_ed25519_sk_nano{{ end }}.pub
+{{- /* Sign each commit and tag with the PIV key of the security key. The
+       gpg-agent holds the key (sshcontrol) and asks for the PIN one time, so a
+       signature needs no PIN. hephaestus never has the YubiKey 5C Nano, so it
+       signs with the Token2. The other machines sign with the Nano. */}}
+{{- if eq .chezmoi.hostname "hephaestus" }}
+	signingkey = key::ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBIoU9vKwHiWXIM+g83dCUku9MBZ1RLMUi1lKthSidb/i4N8WOcrHHcsdij1aWyo+Hua5qgKInFbDOGF9Q1ryabE=
+{{- else }}
+	signingkey = key::ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBJ4Xk5FXh0x31JtmNc6yypVlKT/dO4l+tuQTDtbOa5qwKwrkqbpVEAk9W1FxT3IOPbvrohpdB+Ckf0UeEKG8x1Q=
+{{- end }}
 [gpg]
 	format = ssh
 [gpg "ssh"]

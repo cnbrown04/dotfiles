@@ -31,6 +31,8 @@ local clipboard   = "cliphist list | vicinae dmenu -n Clipboard -p 'Search clipb
 
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
+-- gpg-agent is the SSH agent. It holds the PIV key that signs git commits.
+hl.env("SSH_AUTH_SOCK", (os.getenv("XDG_RUNTIME_DIR") or "/run/user/1000") .. "/gnupg/S.gpg-agent.ssh")
 
 -- NVIDIA, only on machines running the NVIDIA driver (on hephaestus the 3080 drives both
 -- monitors and the AMD iGPU is unused). drm_devices pins Hyprland to one GPU; on hephaestus

@@ -1,0 +1,8 @@
+# gpg-agent is the SSH agent. It offers the PIV keys in sshcontrol, and asks
+# for the PIV PIN on the first use after the key is connected.
+enable-ssh-support
+{{- if eq .chezmoi.os "darwin" }}
+pinentry-program /opt/homebrew/bin/pinentry-mac
+{{- else }}
+pinentry-program /usr/bin/pinentry-gnome3
+{{- end }}

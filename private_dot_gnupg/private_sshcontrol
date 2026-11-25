@@ -1,0 +1,8 @@
+# The keygrips of the PIV keys (slot 9A) that gpg-agent offers to SSH and git.
+# gpg-card list shows the keygrip of the connected key.
+# Token2
+F999B7D2B4BAEC2BBA6A02A67227B3AB59B8FCE3 0
+# YubiKey 5C Nano
+749D09A82581FFC8B2E1841B82E36DF63E9921DF 0
+# YubiKey backup
+D558A2E403B5B667CC2EC478D2777BC886D1E42A 0

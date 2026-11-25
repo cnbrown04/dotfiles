@@ -3,3 +3,11 @@
 export XDG_CONFIG_HOME="$HOME/.config"
 
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+# gpg-agent is the SSH agent: it holds the PIV key that signs git commits.
+# macOS sets its own agent, so this replaces it. In an SSH session, the
+# forwarded agent stays. GPG_TTY lets pinentry ask in the terminal too.
+if [ -z "${SSH_CONNECTION:-}" ] && command -v gpgconf > /dev/null 2>&1; then
+  export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+fi
+[ -n "${TTY:-}" ] && export GPG_TTY="$TTY"
