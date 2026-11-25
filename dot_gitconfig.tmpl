@@ -9,3 +9,14 @@
 [user]
 	name = {{ .name }}
 	email = {{ .email }}
+{{- /* Sign each commit and tag with a FIDO2 key. hephaestus never has the
+       YubiKey 5C Nano, so it signs with the Token2. */}}
+	signingkey = ~/.ssh/{{ if eq .chezmoi.hostname "hephaestus" }}id_ed25519_sk_token2{{ else }}id_ed25519_sk_nano{{ end }}.pub
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	allowedSignersFile = ~/.config/git/allowed_signers
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true
